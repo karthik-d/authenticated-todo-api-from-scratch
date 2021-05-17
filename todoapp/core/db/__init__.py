@@ -22,7 +22,7 @@ def connect_db():
 	return g.db_conn
 
 
-def close_db():
+def close_db(exceptions=None):
 	"""
 	Closes the DB connection for current request
 	if connection was ever made

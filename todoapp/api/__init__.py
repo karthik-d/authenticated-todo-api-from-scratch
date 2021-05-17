@@ -8,6 +8,7 @@ from flask_restplus import Api
 
 from .todo import todo_nspace
 
+
 blueprint = Blueprint('api', __name__)
 
 API = Api(
