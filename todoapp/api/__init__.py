@@ -1,3 +1,8 @@
+""" 
+Creates the API blueprint for this package
+Registers all namespaces to the blueprint
+"""
+
 from flask import Blueprint
 from flask_restplus import Api
 

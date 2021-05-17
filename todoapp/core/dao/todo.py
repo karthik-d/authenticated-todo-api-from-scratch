@@ -1,9 +1,11 @@
+"""
+Data Access Object (DAO) Classes for todo
+to interface between the 
+Database and Data-Requests
+"""
+
 
 class TodoDAO(object):
-	"""
-	Class to instantiate Data Access Objects
-	for Todo items
-	"""
 	
 	def __init__(self):
 		self.counter = 0
@@ -30,6 +32,7 @@ class TodoDAO(object):
 		todo = self.get(id)
 		self.todos.remove(todo)
 	
+
 # Sample data to test the API
 DAO = TodoDAO()
 DAO.create({'task': 'Build an API'})
