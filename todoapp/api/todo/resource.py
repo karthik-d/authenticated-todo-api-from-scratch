@@ -5,7 +5,7 @@ to the todo_model namespace
 
 from flask_restplus import Resource
 
-from todoapp.core.dao.todo import TodoDAO
+from todoapp.core.dao.todo import DAO as TodoDAO
 from .model import todo_nspace
 from .model import todo as todo_model
 
