@@ -55,7 +55,7 @@ class TodoList(Resource):
 			
 
 
-@todo_nspace.route('/<int:id>', methods=["get", "delete", "put"])
+@todo_nspace.route('/<int:id>', methods=["get", "delete", "put", "patch"])
 @todo_nspace.response(404, 'Could not find that todo')
 @todo_nspace.param('id', 'The task ID (unique) ')
 class Todo(Resource):
@@ -91,6 +91,19 @@ class Todo(Resource):
 	@todo_nspace.marshal_with(todo_msg_model)
 	def put(self, id):
 		todo = TodoDAO.update(id, todo_nspace.payload)
+		if todo is None:
+			raise TodoDoesNotExistException("Todo {} doesn't exits".format(id))
+		else:
+			return {
+					"data": todo,
+					"message": "Todo was updated to the following"
+					}, 200
+
+	#@todo_nspace.expect(todo_model, validate=True)
+	@todo_nspace.response(200, 'Todo was updated to the following')
+	@todo_nspace.marshal_with(todo_msg_model)
+	def patch(self, id):
+		todo = TodoDAO.patch_update(id, todo_nspace.payload)
 		if todo is None:
 			raise TodoDoesNotExistException("Todo {} doesn't exits".format(id))
 		else:

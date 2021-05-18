@@ -59,6 +59,7 @@ class Todo(DAOBase):
 			inserted_id = resp_cursor.lastrowid
 			return cls.get(inserted_id)
 
+
 	@classmethod
 	def update(cls, id_, data):
 		update_string = """
@@ -85,6 +86,31 @@ class Todo(DAOBase):
 			return None 
 		else:
 			return cls.get(id_)
+
+
+	@classmethod
+	def patch_update(cls, id_, data):
+		update_string = """
+			UPDATE
+				todo
+			SET
+				{field} = :value
+			WHERE 
+				id = :id_
+		"""
+		rowcount = 0
+		for field,value in data.items():
+			resp_cursor = cls.exec_update(
+				update_string.format(field=field),
+				value=value,
+				id_=id_
+			)
+			rowcount += resp_cursor.rowcount
+		if rowcount==0:
+			return None 
+		else:
+			return cls.get(id_)
+
 
 	@classmethod
 	def delete(cls, id_):
