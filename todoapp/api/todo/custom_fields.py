@@ -3,24 +3,14 @@ CUSTOM fields for todo related models
 Includes validations that will be linked to 
 the namespace.expect() validators
 Adds the 'schema_format' to the FormatChecker of Api class
+Class input-validate method is also used for Request-Parser validation
 """
 
 from flask import current_app
 from flask_restplus import fields
+from flask_restplus.reqparse import Argument
 
 from .namespace import todo_nspace
-
-
-"""
-Input-validation (format-checking) function for the 'Status' custom-field
-Will be registered to the API's format_checker
-"""
-def check_status_input_format(value):
-	value_squeezed = value.replace(' ', '').lower()
-	if value_squeezed in Status.representation.keys():
-			return Status.representation[value_squeezed] 
-	else:
-		raise ValueError
 
 
 class Status(fields.String):
@@ -43,8 +33,15 @@ class Status(fields.String):
 		'finished': 'Finished'
 	}
 
+	help_string = "\
+	Status of the task must be one of ( {statuses} ). Spaces and Cases can be ignored!".format(
+		statuses = ", ".join(representation.values())
+	).strip()
+
+
 	def __init__(self, *args, **kwargs):
 		super(Status, self).__init__(*args, **kwargs)
+
 
 	def format(self, value):
 		"""
@@ -64,6 +61,21 @@ class Status(fields.String):
 		else:
 			raise fields.MarshallingError(Status.format_violation)
 
+
+	@classmethod
+	def check_status_input_format(cls, value):
+		"""
+		Input-validation (format-checking) function for the 'Status' custom-field
+		Will be registered to the API's format_checker
+		Also used for validation Request-Parser arguments
+		"""
+		print(cls, value)
+		value_squeezed = value.replace(' ', '').lower()
+		print(value_squeezed)
+		if value_squeezed in Status.representation.keys():
+			return Status.representation[value_squeezed] 
+		else:
+			raise ValueError
 
 
 

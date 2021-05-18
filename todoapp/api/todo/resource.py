@@ -7,7 +7,7 @@ from flask_restplus import Resource
 from flask import Request
 
 from todoapp.core.dao.todo import Todo as TodoDAO
-from .model import todo_nspace
+from .model import todo_nspace, todopatch_parser
 from .model import TODO as todo_model
 from .model import TODO_WITH_MESSAGE as todo_msg_model
 
@@ -103,7 +103,9 @@ class Todo(Resource):
 	@todo_nspace.response(200, 'Todo was updated to the following')
 	@todo_nspace.marshal_with(todo_msg_model)
 	def patch(self, id):
-		todo = TodoDAO.patch_update(id, todo_nspace.payload)
+		payload = todopatch_parser.parse_args()
+		print(payload)
+		todo = TodoDAO.patch_update(id, payload)
 		if todo is None:
 			raise TodoDoesNotExistException("Todo {} doesn't exits".format(id))
 		else:

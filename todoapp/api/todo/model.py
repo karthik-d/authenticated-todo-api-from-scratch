@@ -1,9 +1,9 @@
 """
-Creates and registers all todo related and models
+Creates and registers all todo related models and request parsers
 Creates a namespace and bind to it
 """
 
-from flask_restplus import Model, fields
+from flask_restplus import Model, fields, reqparse, inputs
 
 from .namespace import todo_nspace
 from .custom_fields import Status
@@ -81,3 +81,42 @@ EXCEPTION_WITH_DATA = todo_nspace.model('TodoExceptionWithData',
 				)
 	}
 )
+
+
+"""
+Request-Parsers definitions
+"""
+todopatch_parser = reqparse.RequestParser()
+todopatch_parser.add_argument(
+	name='task',
+	required=False,
+	help='Task description as text',
+	action='store',
+	location='json',
+	store_missing=False,
+	trim=True,
+	nullable=False
+)
+todopatch_parser.add_argument(
+	name='due_by',
+	required=False,
+	help='Due date in (yyyy-mm-dd) format',
+	action='store',
+	location='json',
+	store_missing=False,
+	trim=True,
+	nullable=False,
+	type=inputs.date_from_iso8601
+)
+todopatch_parser.add_argument(
+	name='status',
+	required=False,
+	help=Status.help_string,
+	action='store',
+	location='json',
+	store_missing=False,
+	trim=True,
+	nullable=False,
+	type=Status.check_status_input_format
+)
+

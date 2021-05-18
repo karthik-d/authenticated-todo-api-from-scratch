@@ -8,12 +8,12 @@ from flask_restplus import Api
 from jsonschema import FormatChecker
 
 from .todo.namespace import todo_nspace
-from .todo.custom_fields import Status, check_status_input_format
+from .todo.custom_fields import Status
 
 blueprint = Blueprint('api', __name__)
 
 format_checker = FormatChecker()
-format_checker.checks(Status.__schema_format__, Status.format_violation) (check_status_input_format)
+format_checker.checks(Status.__schema_format__, Status.format_violation) (Status.check_status_input_format)
 
 API = Api(
 	blueprint,
