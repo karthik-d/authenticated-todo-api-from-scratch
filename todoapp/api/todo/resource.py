@@ -10,7 +10,13 @@ from todoapp.core.dao.todo import Todo as TodoDAO
 from .model import todo_nspace
 from .model import TODO as todo_model
 from .model import TODO_WITH_MESSAGE as todo_msg_model
-from .exception import EmptyTodoListException, DidNotCreateTodoException
+
+from .exception import (
+	EmptyTodoListException, 
+	TodoDoesNotExistException,
+	DidNotCreateTodoException, 
+	DidNotDeleteTodoException
+)
 
 
 @todo_nspace.route('/')
@@ -22,8 +28,9 @@ class TodoList(Resource):
 		"""
 		List all the tasks
 		"""
-
 		todos = TodoDAO.all()
+		for todo in todos:
+			print(todo)
 		if not todos:
 			raise EmptyTodoListException
 		else:
@@ -42,8 +49,8 @@ class TodoList(Resource):
 			raise DidNotCreateTodoException
 		else:
 			return {
-					"data":  [ todo ],
-					"message": "Todo created"
+					"data": todo,
+					"message": "Following todos created"
 					}, 201
 			
 
@@ -54,7 +61,7 @@ class TodoList(Resource):
 class Todo(Resource):
 
 	@todo_nspace.doc('get_todo')
-	@todo_nspace.marshal_with(todo_model)
+	@todo_nspace.marshal_with(todo_msg_model)
 	def get(self, id):
 		todo = TodoDAO.get(id)
 		if todo is None:
@@ -63,10 +70,21 @@ class Todo(Resource):
 			return todo
 
 	@todo_nspace.doc('delete_todo')
-	@todo_nspace.response(204, 'todo_model deleted')
+	@todo_nspace.response(200, 'Following todos deleted')
+	@todo_nspace.marshal_with(todo_msg_model)
 	def delete(self, id):
-		#TodoDAO.delete(id)
-		return '', 204
+		todo = TodoDAO.get(id)
+		if todo is None:
+			raise TodoDoesNotExistException("Todo {} doesn't exist".format(id))
+
+		id_ = TodoDAO.delete(id)
+		if id_ is None:
+			raise DidNotDeleteTodoException
+		else:
+			return {
+					"data": todo,
+					"message": "Following todos deleted"
+					}, 200
 
 	@todo_nspace.expect(todo_model)
 	@todo_nspace.marshal_with(todo_model)

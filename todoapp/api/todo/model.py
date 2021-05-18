@@ -32,9 +32,9 @@ TODO_WITH_MESSAGE = todo_nspace.model('TodoWithMessage',
 				attribute='message'
 				),
 		'todos': fields.Nested(
-				TODO,
-				description='Associated todos for the response',
-				attribute='data'
+						TODO,
+						description='Associated todos for the response',
+						attribute='data'
 				)
 	}
 )
@@ -56,7 +56,15 @@ EXCEPTION = todo_nspace.model('TodoException',
 
 EXCEPTION_WITH_DATA = todo_nspace.model('TodoExceptionWithData',
 	{
-		'Exception': fields.Nested(EXCEPTION),
-		'Associated Data': fields.Nested(TODO)
+		'Exception': fields.Nested(
+					EXCEPTION,
+					description='Exception code and message',
+					attribute='exception'
+				),
+		'Associated Data': fields.Nested(
+					TODO,
+					description='Associated todos for the exception',
+					attribute='data'
+				)
 	}
 )

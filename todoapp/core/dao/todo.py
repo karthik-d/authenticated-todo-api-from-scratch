@@ -44,7 +44,6 @@ class Todo(TodoBase_):
 			ORDER BY id
 		"""
 		result = cls.exec_retrieve(query_string)
-		result.fetchall()
 		return result.fetchall()
 
 	@classmethod
@@ -76,7 +75,16 @@ class Todo(TodoBase_):
 		todo.update(data)
 		return todo
 
-	def delete(self, id):
-		todo = self.get(id)
-		self.todos.remove(todo)
+	@classmethod
+	def delete(cls, id_):
+		update_string = """
+			DELETE
+			FROM todo
+			WHERE id = :id_
+		"""
+		resp_cursor = cls.exec_update(update_string, id_=id_)
+		if not resp_cursor:
+			return None
+		else:
+			return id_
 	

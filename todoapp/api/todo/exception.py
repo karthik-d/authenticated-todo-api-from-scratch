@@ -11,16 +11,25 @@ class TodoException(Exception):
 	related exceptions
 	"""
 
-	def __init__(self, message, todo=None):
+	def __init__(self, message, todos=None):
 		Exception.__init__(self)
 		self.message = message 
-		self.data = todo
+		self.data = todos
 
 	def has_data(self):
 		if self.data is None:
 			return False 
 		else:
 			return True
+
+	def get_exception(self):
+		return {
+			key: value for key,value in self.__dict__.items() 
+			if key in ['http_code', 'message']
+		}
+
+	def get_data(self):
+		return self.data
 
 
 class EmptyTodoListException(TodoException):
@@ -36,14 +45,25 @@ class EmptyTodoListException(TodoException):
 		self.http_code = 200
 
 
+class TodoDoesNotExistException(TodoException):
+	"""
+	When a todo of requested id does not exist
+	this exception is raised
+	"""
+
+	def __init__(self, message="Todo could not be found"):
+		TodoException.__init__(self, message, None)
+		self.http_code = 404
+
+
 class DidNotCreateTodoException(TodoException):
 	"""
 	When the todo could not be created,
 	return a custom error message
 	"""
 
-	def __init__(self, message="Could not create new todo", todo=None):
-		TodoException.__init__(self, message, todo)
+	def __init__(self, message="Could not create new todo", todos=None):
+		TodoException.__init__(self, message, todos)
 		self.http_code = 500
 
 
@@ -53,21 +73,24 @@ class DidNotDeleteTodoException(TodoException):
 	return a custom error message
 	"""
 
-	def __init__(self, message="Could not create new todo", todo=None):
-		TodoException.__init__(self, message)
+	def __init__(self, message="Could not delete todo", todos=None):
+		TodoException.__init__(self, message, todos)
 		self.http_code = 500
 
 
 def todo_exception_handler(exception):
 	if(exception.has_data()):
 		return todo_nspace.marshal(
-					exception.__dict__, 
-					exception_data_model
-				), exception.http_code
+			{
+			'exception': exception.get_exception(),
+			'data': exception.get_data()
+			}, 
+			exception_data_model
+		), exception.http_code
 	else:
 		return todo_nspace.marshal(
-					exception.__dict__, 
-					exception_model
-				), exception.http_code
+			exception.get_exception(), 
+			exception_model
+		), exception.http_code
 
 
