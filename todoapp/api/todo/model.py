@@ -10,14 +10,13 @@ from flask_restplus import Namespace, Model, fields
 todo_nspace = Namespace('todo', description='Todo operations')
 
 
-todo = todo_nspace.model('Todo', 
+TODO = todo_nspace.model('Todo', 
 	{
 		'id': fields.Integer(
 				readonly=True,
 				description='The task unique identifier',
 				attribute='id'
 				),
-
 		'task': fields.String(
 				required=True, 
 				description='The task details',
@@ -26,7 +25,22 @@ todo = todo_nspace.model('Todo',
 	}
 )
 
-exception = todo_nspace.model('TodoException',
+TODO_WITH_MESSAGE = todo_nspace.model('TodoWithMessage',
+	{
+		'message': fields.String(
+				description='Description of what was was done due to the request',
+				attribute='message'
+				),
+		'todos': fields.Nested(
+				TODO,
+				description='Associated todos for the response',
+				attribute='data'
+				)
+	}
+)
+
+
+EXCEPTION = todo_nspace.model('TodoException',
 	{
 		'HTTP_status': fields.Integer(
 			description='The HTTP status code for the response',
@@ -36,5 +50,13 @@ exception = todo_nspace.model('TodoException',
 			description='Description of the error/exception',
 			attribute='message'
 		)
+	}
+)
+
+
+EXCEPTION_WITH_DATA = todo_nspace.model('TodoExceptionWithData',
+	{
+		'Exception': fields.Nested(EXCEPTION),
+		'Associated Data': fields.Nested(TODO)
 	}
 )

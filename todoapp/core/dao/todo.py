@@ -44,6 +44,7 @@ class Todo(TodoBase_):
 			ORDER BY id
 		"""
 		result = cls.exec_retrieve(query_string)
+		result.fetchall()
 		return result.fetchall()
 
 	@classmethod

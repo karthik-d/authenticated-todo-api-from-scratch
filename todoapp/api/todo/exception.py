@@ -1,5 +1,8 @@
+#from flask_restplus import marshal
+
 from .model import todo_nspace
-from .model import exception as exception_model
+from .model import EXCEPTION as exception_model
+from .model import EXCEPTION_WITH_DATA as exception_data_model
 
 
 class TodoException(Exception):
@@ -8,8 +11,16 @@ class TodoException(Exception):
 	related exceptions
 	"""
 
-	def __init__(self):
+	def __init__(self, message, todo=None):
 		Exception.__init__(self)
+		self.message = message 
+		self.data = todo
+
+	def has_data(self):
+		if self.data is None:
+			return False 
+		else:
+			return True
 
 
 class EmptyTodoListException(TodoException):
@@ -21,9 +32,8 @@ class EmptyTodoListException(TodoException):
 	"""
 
 	def __init__(self, message="No todos in the list"):
-		TodoException.__init__(self)
+		TodoException.__init__(self, message, None)
 		self.http_code = 200
-		self.message = message
 
 
 class DidNotCreateTodoException(TodoException):
@@ -32,14 +42,32 @@ class DidNotCreateTodoException(TodoException):
 	return a custom error message
 	"""
 
-	def __init__(self, message="Could not create new todo", ):
-		TodoException.__init__(self)
+	def __init__(self, message="Could not create new todo", todo=None):
+		TodoException.__init__(self, message, todo)
 		self.http_code = 500
-		self.message = message
 
 
-@todo_nspace.marshal_with(exception_model)
+class DidNotDeleteTodoException(TodoException):
+	"""
+	When the todo could not be created,
+	return a custom error message
+	"""
+
+	def __init__(self, message="Could not create new todo", todo=None):
+		TodoException.__init__(self, message)
+		self.http_code = 500
+
+
 def todo_exception_handler(exception):
-	return exception.__dict__, exception.http_code
+	if(exception.has_data()):
+		return todo_nspace.marshal(
+					exception.__dict__, 
+					exception_data_model
+				), exception.http_code
+	else:
+		return todo_nspace.marshal(
+					exception.__dict__, 
+					exception_model
+				), exception.http_code
 
 
