@@ -9,3 +9,4 @@ from flask_restplus import Namespace
 
 from .model import *
 from .resource import *
+from .exception import *

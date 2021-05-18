@@ -3,6 +3,16 @@ from flask import Flask
 from werkzeug.contrib.fixers import ProxyFix
 
 
+def register_blueprints(app):
+	from todoapp.api import blueprint as API
+	app.register_blueprint(API, url_prefix=None)
+
+
+def register_error_handlers(app):
+	from todoapp.api.todo.exception import EmptyTodoListException, empty_todolist_handler
+	app.register_error_handler(EmptyTodoListException, empty_todolist_handler)
+
+
 def ensure_instance_path(app):
 	try:
 		os.makedirs(app.instance_path)
@@ -27,11 +37,11 @@ def create_app():
 	Initializes Database
 	Return the initialised application handle
 	"""	
-	app = Flask(__name__)
-	# Register blueprints
-	from todoapp.api import blueprint as API
-	app.register_blueprint(API, url_prefix=None)	
+	
+	app = Flask(__name__)	
 	app.wsgi_app = ProxyFix(app.wsgi_app)
+	register_blueprints(app)
+	register_error_handlers(app)
 	# Load configurations
 	app.config.from_object('config.ApplicationConfig')
 	ensure_instance_path(app)

@@ -8,6 +8,7 @@ from flask_restplus import Resource
 from todoapp.core.dao.todo import Todo as TodoDAO
 from .model import todo_nspace
 from .model import todo as todo_model
+from .exception import EmptyTodoListException
 
 
 @todo_nspace.route('/')
@@ -19,7 +20,11 @@ class TodoList(Resource):
 		"""
 		List all the tasks
 		"""
-		return TodoDAO.all()
+		todos = TodoDAO.all()
+		if not todos:
+			raise EmptyTodoListException
+		else:
+			return todos, 200
 
 	@todo_nspace.doc('create_todo')
 	@todo_nspace.expect(todo_model)
