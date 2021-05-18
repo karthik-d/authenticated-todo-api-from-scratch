@@ -16,7 +16,7 @@ TODO = todo_nspace.model('Todo',
 	{
 		'id': fields.Integer(
 				readonly=True,
-				description='The task unique identifier',
+				description='A unique identifier for the task (Auto-Generated)',
 				attribute='id'
 				),
 		'task': fields.String(
@@ -86,7 +86,10 @@ EXCEPTION_WITH_DATA = todo_nspace.model('TodoExceptionWithData',
 """
 Request-Parsers definitions
 """
-todopatch_parser = reqparse.RequestParser()
+todopatch_parser = reqparse.RequestParser(
+	bundle_errors=False,
+	trim=True
+)
 todopatch_parser.add_argument(
 	name='task',
 	required=False,
@@ -94,7 +97,6 @@ todopatch_parser.add_argument(
 	action='store',
 	location='json',
 	store_missing=False,
-	trim=True,
 	nullable=False
 )
 todopatch_parser.add_argument(
@@ -104,7 +106,6 @@ todopatch_parser.add_argument(
 	action='store',
 	location='json',
 	store_missing=False,
-	trim=True,
 	nullable=False,
 	type=inputs.date_from_iso8601
 )
@@ -115,7 +116,6 @@ todopatch_parser.add_argument(
 	action='store',
 	location='json',
 	store_missing=False,
-	trim=True,
 	nullable=False,
 	type=Status.check_status_input_format
 )

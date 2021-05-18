@@ -11,8 +11,9 @@ class TodoException(Exception):
 	related exceptions
 	"""
 
-	def __init__(self, message, todos=None):
-		super(TodoException, self).__init__()
+	def __init__(self, http_code, message, todos=None, *args, **kwargs):
+		super(TodoException, self).__init__(*args, **kwargs)
+		self.http_code = http_code
 		self.message = message 
 		self.data = todos
 
@@ -40,9 +41,9 @@ class EmptyTodoListException(TodoException):
 	and its handling was successful
 	"""
 
-	def __init__(self, message="No todos in the list"):
-		super(TodoException, self).__init__(message, None)
-		self.http_code = 200
+	def __init__(self, message="No todos in the list", *args, **kwargs):
+		http_code = 200
+		super(EmptyTodoListException, self).__init__(http_code, message, None, *args, **kwargs)
 
 
 class TodoDoesNotExistException(TodoException):
@@ -51,9 +52,9 @@ class TodoDoesNotExistException(TodoException):
 	this exception is raised
 	"""
 
-	def __init__(self, message="Todo could not be found"):
-		super(TodoException, self).__init__(message, None)
-		self.http_code = 404
+	def __init__(self, message="Todo could not be found", *args, **kwargs):
+		http_code = 404
+		super(TodoDoesNotExistException, self).__init__(http_code, message, None, *args, **kwargs)
 
 
 class DidNotCreateTodoException(TodoException):
@@ -62,9 +63,9 @@ class DidNotCreateTodoException(TodoException):
 	return a custom error message
 	"""
 
-	def __init__(self, message="Could not create new todo", todos=None):
-		super(TodoException, self).__init__(message, todos)
-		self.http_code = 500
+	def __init__(self, message="Could not create new todo", todos=None, *args, **kwargs):
+		http_code = 500
+		super(DidNotCreateTodoException, self).__init__(http_code, message, todos, *args, **kwargs)
 
 
 class DidNotDeleteTodoException(TodoException):
@@ -73,9 +74,9 @@ class DidNotDeleteTodoException(TodoException):
 	return a custom error message
 	"""
 
-	def __init__(self, message="Could not delete todo", todos=None):
-		super(TodoException, self).__init__(message, todos)
-		self.http_code = 500
+	def __init__(self, message="Could not delete todo", todos=None, *args, **kwargs):
+		http_code = 500
+		super(DidNotDeleteTodoException, self).__init__(http_code, message, todos, *args, **kwargs)
 
 
 """

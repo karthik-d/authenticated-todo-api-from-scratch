@@ -72,10 +72,10 @@ class Status(fields.String):
 		print(cls, value)
 		value_squeezed = value.replace(' ', '').lower()
 		print(value_squeezed)
-		if value_squeezed in Status.representation.keys():
-			return Status.representation[value_squeezed] 
+		if value_squeezed in cls.representation.keys():
+			return cls.representation[value_squeezed] 
 		else:
-			raise ValueError
+			raise cls.format_violation
 
 
 
