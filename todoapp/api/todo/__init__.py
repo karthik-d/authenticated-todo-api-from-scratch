@@ -5,8 +5,8 @@ of this entity : todo
 Initialised with the package
 """ 
 
-from flask_restplus import Namespace
-
+from .namespace import *
+from .custom_fields import *
 from .model import *
 from .resource import *
 from .exception import *

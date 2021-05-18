@@ -19,7 +19,7 @@ from .exception import (
 )
 
 
-@todo_nspace.route('/')
+@todo_nspace.route('/', methods=["get", "post"])
 class TodoList(Resource):
 
 	@todo_nspace.doc('list_todos')
@@ -55,7 +55,7 @@ class TodoList(Resource):
 			
 
 
-@todo_nspace.route('/<int:id>')
+@todo_nspace.route('/<int:id>', methods=["get", "delete", "put"])
 @todo_nspace.response(404, 'Could not find that todo')
 @todo_nspace.param('id', 'The task ID (unique) ')
 class Todo(Resource):

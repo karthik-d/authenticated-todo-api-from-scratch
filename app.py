@@ -23,12 +23,13 @@ def ensure_instance_path(app):
 def define_paths(app):
 	app.config.update(
 		DB_PATH = os.path.join(app.instance_path, app.config['DB_NAME']),
-		DB_SCRIPTS_PATH = os.path.join(	app.root_path, 
-										'todoapp',
-										'core',
-										'db',
-										'scripts'
-										)
+		DB_MIGRATIONS_PATH = os.path.join(	
+			app.root_path, 
+			'todoapp',
+			'core',
+			'db',
+			'migrations'
+		)
 	)
 
 def create_app():

@@ -1,6 +1,6 @@
 #from flask_restplus import marshal
 
-from .model import todo_nspace
+from .namespace import todo_nspace
 from .model import EXCEPTION as exception_model
 from .model import EXCEPTION_WITH_DATA as exception_data_model
 
@@ -12,7 +12,7 @@ class TodoException(Exception):
 	"""
 
 	def __init__(self, message, todos=None):
-		Exception.__init__(self)
+		super(TodoException, self).__init__()
 		self.message = message 
 		self.data = todos
 
@@ -41,7 +41,7 @@ class EmptyTodoListException(TodoException):
 	"""
 
 	def __init__(self, message="No todos in the list"):
-		TodoException.__init__(self, message, None)
+		super(TodoException, self).__init__(message, None)
 		self.http_code = 200
 
 
@@ -52,7 +52,7 @@ class TodoDoesNotExistException(TodoException):
 	"""
 
 	def __init__(self, message="Todo could not be found"):
-		TodoException.__init__(self, message, None)
+		super(TodoException, self).__init__(message, None)
 		self.http_code = 404
 
 
@@ -63,7 +63,7 @@ class DidNotCreateTodoException(TodoException):
 	"""
 
 	def __init__(self, message="Could not create new todo", todos=None):
-		TodoException.__init__(self, message, todos)
+		super(TodoException, self).__init__(message, todos)
 		self.http_code = 500
 
 
@@ -74,10 +74,14 @@ class DidNotDeleteTodoException(TodoException):
 	"""
 
 	def __init__(self, message="Could not delete todo", todos=None):
-		TodoException.__init__(self, message, todos)
+		super(TodoException, self).__init__(message, todos)
 		self.http_code = 500
 
 
+"""
+Generic exception handler to dispatch reponse to 
+requestrs made to API endpoint when excpetions occur
+"""
 def todo_exception_handler(exception):
 	if(exception.has_data()):
 		return todo_nspace.marshal(

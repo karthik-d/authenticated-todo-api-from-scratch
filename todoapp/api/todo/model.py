@@ -3,13 +3,15 @@ Creates and registers all todo related and models
 Creates a namespace and bind to it
 """
 
-from flask_restplus import Namespace, Model, fields
+from flask_restplus import Model, fields
+
+from .namespace import todo_nspace
+from .custom_fields import Status
 
 
-# Create the namespace
-todo_nspace = Namespace('todo', description='Todo operations')
-
-
+"""
+MODEL definitions
+"""
 TODO = todo_nspace.model('Todo', 
 	{
 		'id': fields.Integer(
@@ -21,6 +23,17 @@ TODO = todo_nspace.model('Todo',
 				required=True, 
 				description='The task details',
 				attribute='task'
+				),
+		'due_by': fields.Date(
+				dt_format='iso8601',
+				required=True,
+				description='Due date for the task',
+				attribute='due_by',
+				),
+		'status': Status(
+				default='Not started',
+				description='Completion status of the task',
+				attribute='status'
 				)
 	}
 )
