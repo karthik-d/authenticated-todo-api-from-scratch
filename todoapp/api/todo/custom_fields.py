@@ -59,10 +59,10 @@ class Status(fields.String):
 			return None 
 		
 		value_squeezed = value.replace(' ', '').lower()
-		if value_squeezed in cls.representation.keys():
-			return cls.representation[value_squeezed] 
+		if value_squeezed in Status.representation.keys():
+			return Status.representation[value_squeezed] 
 		else:
-			raise fields.MarshallingError(cls.format_violation)
+			raise fields.MarshallingError(Status.format_violation)
 
 
 

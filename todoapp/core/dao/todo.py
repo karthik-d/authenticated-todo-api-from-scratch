@@ -41,11 +41,18 @@ class Todo(DAOBase):
 	@classmethod 
 	def create(cls, data):
 		update_string = """
-			INSERT INTO todo (task)
-			VALUES (:task)
+			INSERT INTO todo (task, due_by, status)
+			VALUES (:task, :due, :status)
 		"""
 		todo_task = data.get('task')
-		resp_cursor = cls.exec_update(update_string, task=todo_task)
+		todo_due = data.get('due_by')
+		todo_status = data.get('status')
+		resp_cursor = cls.exec_update(
+			update_string, 
+			task=todo_task,
+			due=todo_due,
+			status=todo_status
+		)
 		if resp_cursor.rowcount==0:
 			return None 
 		else:
@@ -58,13 +65,22 @@ class Todo(DAOBase):
 			UPDATE
 				todo
 			SET
-				task = :task
+				task = :task,
+				due_by = :due,
+				status = :status
 			WHERE 
 				id = :id_
 		"""
-		todo_task = data.get('task')		
-		resp_cursor = cls.exec_update(update_string, id_=id_, task=todo_task)
-		print(resp_cursor.rowcount)
+		todo_task = data.get('task')
+		todo_due = data.get('due_by')
+		todo_status = data.get('status')
+		resp_cursor = cls.exec_update(
+			update_string, 
+			id_=id_,
+			task=todo_task,
+			due=todo_due,
+			status=todo_status
+		)
 		if resp_cursor.rowcount==0:
 			return None 
 		else:
