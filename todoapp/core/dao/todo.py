@@ -4,28 +4,10 @@ to interface between the
 Database and Data-Requests
 """
 
-import sqlite3
-
-import todoapp.core.db as db
-
-class TodoBase_(object):
-	
-	@classmethod 
-	def exec_retrieve(cls, query, **params):
-		connection = db.connect_db()
-		cursor = connection.cursor()
-		return cursor.execute(query, params)
-
-	@classmethod 
-	def exec_update(cls, query, **params):
-		connection = db.connect_db()
-		cursor = connection.cursor()
-		response = cursor.execute(query, params)
-		connection.commit()
-		return response
+from .base import DAOBase
 
 
-class Todo(TodoBase_):
+class Todo(DAOBase):
 	
 	def __init__(self):
 		self.counter = 0
@@ -64,16 +46,29 @@ class Todo(TodoBase_):
 		"""
 		todo_task = data.get('task')
 		resp_cursor = cls.exec_update(update_string, task=todo_task)
-		if not resp_cursor:
+		if resp_cursor.rowcount==0:
 			return None 
 		else:
 			inserted_id = resp_cursor.lastrowid
 			return cls.get(inserted_id)
 
-	def update(self, id, data):
-		todo = self.get(id)
-		todo.update(data)
-		return todo
+	@classmethod
+	def update(cls, id_, data):
+		update_string = """
+			UPDATE
+				todo
+			SET
+				task = :task
+			WHERE 
+				id = :id_
+		"""
+		todo_task = data.get('task')		
+		resp_cursor = cls.exec_update(update_string, id_=id_, task=todo_task)
+		print(resp_cursor.rowcount)
+		if resp_cursor.rowcount==0:
+			return None 
+		else:
+			return cls.get(id_)
 
 	@classmethod
 	def delete(cls, id_):
@@ -83,7 +78,7 @@ class Todo(TodoBase_):
 			WHERE id = :id_
 		"""
 		resp_cursor = cls.exec_update(update_string, id_=id_)
-		if not resp_cursor:
+		if resp_cursor.rowcount==0:
 			return None
 		else:
 			return id_

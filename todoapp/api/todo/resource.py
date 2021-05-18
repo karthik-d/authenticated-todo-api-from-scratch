@@ -50,7 +50,7 @@ class TodoList(Resource):
 		else:
 			return {
 					"data": todo,
-					"message": "Following todos created"
+					"message": "Following todos were created"
 					}, 201
 			
 
@@ -70,7 +70,7 @@ class Todo(Resource):
 			return todo
 
 	@todo_nspace.doc('delete_todo')
-	@todo_nspace.response(200, 'Following todos deleted')
+	@todo_nspace.response(200, 'Following todo was deleted')
 	@todo_nspace.marshal_with(todo_msg_model)
 	def delete(self, id):
 		todo = TodoDAO.get(id)
@@ -83,10 +83,18 @@ class Todo(Resource):
 		else:
 			return {
 					"data": todo,
-					"message": "Following todos deleted"
+					"message": "Following todo was deleted"
 					}, 200
 
-	@todo_nspace.expect(todo_model)
-	@todo_nspace.marshal_with(todo_model)
+	@todo_nspace.expect(todo_model, validate=True)
+	@todo_nspace.response(200, 'Todo was updated to the following')
+	@todo_nspace.marshal_with(todo_msg_model)
 	def put(self, id):
-		return TodoDAO.update(id, api.payload)
+		todo = TodoDAO.update(id, todo_nspace.payload)
+		if todo is None:
+			raise TodoDoesNotExistException("Todo {} doesn't exits".format(id))
+		else:
+			return {
+					"data": todo,
+					"message": "Todo was updated to the following"
+					}, 200
