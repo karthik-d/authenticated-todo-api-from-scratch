@@ -4,11 +4,12 @@ to registers their routes to the todo namespace
 """
 
 from flask_restplus import Resource
+from flask import Request
 
 from todoapp.core.dao.todo import Todo as TodoDAO
 from .model import todo_nspace
 from .model import todo as todo_model
-from .exception import EmptyTodoListException
+from .exception import EmptyTodoListException, DidNotCreateTodoException
 
 
 @todo_nspace.route('/')
@@ -27,11 +28,15 @@ class TodoList(Resource):
 			return todos, 200
 
 	@todo_nspace.doc('create_todo')
-	@todo_nspace.expect(todo_model)
+	@todo_nspace.expect(todo_model, validate=True)
 	@todo_nspace.marshal_with(todo_model, code=201)
 	def post(self):
 		'''Create a new task'''
-		return TodoDAO.create(api.payload), 201
+		todo = TodoDAO.create(todo_nspace.payload)
+		if todo is None:
+			raise DidNotCreateTodoException
+		else:
+			return todo, 201
 
 
 @todo_nspace.route('/<int:id>')

@@ -44,8 +44,6 @@ class Todo(TodoBase_):
 			ORDER BY id
 		"""
 		result = cls.exec_retrieve(query_string)
-		result.fetchall()
-		print(result)
 		return result.fetchall()
 
 	@classmethod
@@ -58,11 +56,19 @@ class Todo(TodoBase_):
 		result = cls.exec_retrieve(query_string, id_=id_)
 		return result.fetchone()
 
-	def create(self, data):
-		todo = data
-		todo['id'] = self.counter = self.counter + 1
-		self.todos.append(todo)
-		return todo
+	@classmethod 
+	def create(cls, data):
+		update_string = """
+			INSERT INTO todo (task)
+			VALUES (:task)
+		"""
+		todo_task = data.get('task')
+		resp_cursor = cls.exec_update(update_string, task=todo_task)
+		if not resp_cursor:
+			return None 
+		else:
+			inserted_id = resp_cursor.lastrowid
+			return cls.get(inserted_id)
 
 	def update(self, id, data):
 		todo = self.get(id)
@@ -73,9 +79,3 @@ class Todo(TodoBase_):
 		todo = self.get(id)
 		self.todos.remove(todo)
 	
-
-# Sample data to test the API
-DAO = Todo()
-DAO.create({'task': 'Build an API'})
-DAO.create({'task': '?????'})
-DAO.create({'task': 'profit!'})

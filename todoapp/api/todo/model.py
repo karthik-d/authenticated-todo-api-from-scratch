@@ -10,7 +10,7 @@ from flask_restplus import Namespace, Model, fields
 todo_nspace = Namespace('todo', description='Todo operations')
 
 
-todo = Model('Todo', 
+todo = todo_nspace.model('Todo', 
 	{
 		'id': fields.Integer(
 				readonly=True,
@@ -26,7 +26,7 @@ todo = Model('Todo',
 	}
 )
 
-exception = Model('TodoException',
+exception = todo_nspace.model('TodoException',
 	{
 		'HTTP_status': fields.Integer(
 			description='The HTTP status code for the response',

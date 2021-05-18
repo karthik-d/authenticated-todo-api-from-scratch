@@ -9,8 +9,8 @@ def register_blueprints(app):
 
 
 def register_error_handlers(app):
-	from todoapp.api.todo.exception import EmptyTodoListException, empty_todolist_handler
-	app.register_error_handler(EmptyTodoListException, empty_todolist_handler)
+	from todoapp.api.todo.exception import TodoException, todo_exception_handler
+	app.register_error_handler(TodoException, todo_exception_handler)
 
 
 def ensure_instance_path(app):
