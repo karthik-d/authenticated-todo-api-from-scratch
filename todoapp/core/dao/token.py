@@ -25,7 +25,7 @@ class Token(DAOBase):
 
 		query_string = """
 			SELECT *
-			FROM todo
+			FROM token
 			WHERE id = :id_
 		"""
 		result = cls.exec_retrieve(query_string, id_=id_)
@@ -48,9 +48,10 @@ class Token(DAOBase):
 		read_only = data.get('read_only')
 		while True:
 			try:
+				token = generate_token()
 				resp_cursor = cls.exec_update(
 					update_string,
-					token="test"
+					token=token,
 					readonly=read_only
 				)
 			except sqlite3.IntegrityError:

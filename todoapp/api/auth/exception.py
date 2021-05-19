@@ -13,6 +13,12 @@ class TokenException(Exception):
 		self.http_code = http_code
 		self.message = message 
 
+	def get_exception(self):
+		return {
+			key: value for key,value in self.__dict__.items() 
+			if key in ['http_code', 'message']
+		}
+
 
 class TokenCreationDeniedException(TokenException):
 	"""
@@ -21,8 +27,8 @@ class TokenCreationDeniedException(TokenException):
 	"""
 
 	def __init__(self, message="Could not create new token", *args, **kwargs):
-		http_code = 500
-		super(DidNotCreateTokenException, self).__init__(http_code, message, *args, **kwargs)
+		http_code = 401
+		super(TokenCreationDeniedException, self).__init__(http_code, message, *args, **kwargs)
 
 
 class DidNotCreateTokenException(TokenException):

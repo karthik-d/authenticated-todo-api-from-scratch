@@ -20,8 +20,12 @@
 			</div>
 
 			<div>
-				<label for='readonly_ip'>Read Only ? </label>
-				<input id='readonly_ip' name='readonly' type='checkbox' />
+				<label for='scope_ip'>Access Rights: </label>
+				<select name="scope" id="scope_ip">
+					<option value="0">Read-Only</option>
+					<option value="1">Read-Write</option>
+					<option value="2">Admin</option>
+				  </select>
 			</div>
 
 			<div>

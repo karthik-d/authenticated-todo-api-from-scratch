@@ -1,5 +1,5 @@
 """
-CUSTOM fields for todo related models
+CUSTOM fields for token related models
 Includes validations that will be linked to 
 the namespace.expect() validators
 Adds the 'schema_format' to the FormatChecker of Api class
@@ -11,7 +11,7 @@ from flask_restplus import fields
 from .namespace import todo_nspace
 
 
-class Status(fields.String):
+class Scope(fields.String):
 	"""
 	Custom field to store the status of a todo
 	Must be one of ( 'Not started', 'In progress', 'Finished' )
@@ -21,19 +21,20 @@ class Status(fields.String):
 	Performs Input-Validation by registering 'check_status_input' to API's Format Checker
 	"""
 
-	__schema_format__ = 'todo_status'
+	__schema_format__ = 'token_scope'
 
 	format_violation = ValueError
 
 	representation = {
-		'notstarted': 'Not started',
-		'inprogress': 'In progress',
-		'finished': 'Finished'
+		0 : 'Read-Only',
+		1 : 'Read-Write',
+		2 : 'Admin'
 	}
 
 	help_string = "\
-	Status of the task must be one of ( {statuses} ). Spaces and Cases can be ignored!".format(
-		statuses = ", ".join(representation.values())
+	Scope of the token must be one of ( {scopes} ) representing ( {vals} ).".format(
+		scopes = ", ".join(representation.keys(),
+		vals = ", ", join(representation.values()))
 	).strip()
 
 
@@ -53,26 +54,11 @@ class Status(fields.String):
 		if value is None:
 			return None 
 		
-		value_squeezed = value.replace(' ', '').lower()
-		if value_squeezed in Status.representation.keys():
-			return Status.representation[value_squeezed] 
-		else:
+		if value not in range(0, 3):
 			raise fields.MarshallingError(Status.format_violation)
-
-
-	@classmethod
-	def check_status_input_format(cls, value):
-		"""
-		Input-validation (format-checking) function for the 'Status' custom-field
-		Will be registered to the API's format_checker
-		Also used for validation Request-Parser arguments
-		"""
-		
-		value_squeezed = value.replace(' ', '').lower()
-		if value_squeezed in cls.representation.keys():
-			return cls.representation[value_squeezed] 
 		else:
-			raise cls.format_violation
+			return Status.representation[value] 
+			
 
 
 

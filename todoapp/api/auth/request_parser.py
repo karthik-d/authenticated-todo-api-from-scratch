@@ -40,6 +40,6 @@ Credentials_Parser.add_argument(
 	location='form',
 	store_missing=False,
 	nullable=False,
-	type=inputs.boolean,
+	type=inputs.int_range(low=0, high=2),
 	dest='read_only'
 )

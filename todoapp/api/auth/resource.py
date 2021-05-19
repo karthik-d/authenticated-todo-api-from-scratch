@@ -1,9 +1,15 @@
 from flask_restplus import Resource
 
+from todoapp.core.utils.auth import validate_admin
+from todoapp.core.dao.token import Token as TokenDAO
 from .namespace import auth_nspace 
 from .model import TOKEN as token_model
 from .request_parser import Credentials_Parser
-from .exception import DidNotCreateTokenException
+
+from .exception import (
+	DidNotCreateTokenException,
+	TokenCreationDeniedException
+)
 
 
 @auth_nspace.route(
@@ -26,7 +32,7 @@ class Token(Resource):
 		payload = Credentials_Parser.parse_args()
 		if not validate_admin(payload):
 			raise TokenCreationDeniedException("Not authorized to create token")
-		token_row = TodoDAO.create(payload)
+		token_row = TokenDAO.create(payload)
 		if token_row is None:
 			raise DidNotCreateTokenException("Could not create task")
 		else:

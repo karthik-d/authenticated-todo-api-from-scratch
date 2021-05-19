@@ -13,12 +13,12 @@ TOKEN = auth_nspace.model('Todo',
 		'token': fields.String(
 			required=True, 
 			description='A unique 36-character string',
-			attribute='task'
+			attribute='token'
 			),
-		'read_only': fields.Boolean(
+		'scope': fields.Integer(
 			required=True,
-			description='Boolean 1 if read-only, 0 if read-write',
-			attribute='read_only'
+			description='Integer (0, 1, or 2) for (read-only, read-write, admin)',
+			attribute='scope'
 			)
 	}
 )
