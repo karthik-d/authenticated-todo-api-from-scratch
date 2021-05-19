@@ -6,6 +6,7 @@ Database and Data-Requests
 
 from datetime import date
 
+from todoapp.api.todo.custom_fields import Status 
 from .base import DAOBase
 
 
@@ -40,13 +41,15 @@ class Todo(DAOBase):
 		By default, they are ordered by the due-date
 		"""
 
+		finished_status = Status.representation['finished']
 		query_string = """
 			SELECT * 
 			FROM todo
 			WHERE due_by < :date
-			  AND status <> "Finished"
+			  AND status <> "{status}"
 			ORDER BY due_by
-		"""
+		""".format(status=finished_status)
+
 		curr_date = date.today().strftime('%Y-%m-%d')
 		result = cls.exec_retrieve(query_string, date=curr_date)
 		return result.fetchall()
@@ -60,14 +63,15 @@ class Todo(DAOBase):
 		By default, they are ordered by the due-date
 		"""
 
+		finished_status = Status.representation['finished']
 		query_string = """
 			SELECT * 
 			FROM todo
-			WHERE status = "Finished"
+			WHERE status = "{status}"
 			ORDER BY due_by
-		"""
-		curr_date = date.today().strftime('%Y-%m-%d')
-		result = cls.exec_retrieve(query_string, date=curr_date)
+		""".format(status=finished_status)
+
+		result = cls.exec_retrieve(query_string)
 		return result.fetchall()
 
 	@classmethod
