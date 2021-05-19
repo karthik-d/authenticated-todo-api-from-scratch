@@ -6,7 +6,7 @@ Database and Data-Requests
 
 import sqlite3
 
-from todoapp.core.utils.auth import generate_token
+from todoapp.core.utils.dao import generate_token
 from .base import DAOBase
 
 
@@ -14,6 +14,37 @@ class Token(DAOBase):
 	
 	def __init__(self, *args, **kwargs):
 		super(Todo, self).__init__(*args, **kwargs)
+
+	
+	@classmethod
+	def all(cls):
+		"""
+		Retrieves all rows from the 'token' relation
+		Returns a list of 'sqlite3 Row objects'
+		"""
+
+		query_string = """
+			SELECT * 
+			FROM token_t
+		"""
+		result = cls.exec_retrieve(query_string)
+		return result.fetchall()
+
+
+	@classmethod 
+	def get(cls, token):
+		"""
+		Retrieves a token row by token value
+		Returns a list of 'sqlite3 Row objects'
+		"""
+
+		query_string = """
+			SELECT *
+			FROM token_t
+			WHERE token = :token
+		"""
+		result = cls.exec_retrieve(query_string, token=token)
+		return result.fetchone()
 
 
 	@classmethod
@@ -25,7 +56,7 @@ class Token(DAOBase):
 
 		query_string = """
 			SELECT *
-			FROM token
+			FROM token_t
 			WHERE id = :id_
 		"""
 		result = cls.exec_retrieve(query_string, id_=id_)
@@ -41,7 +72,7 @@ class Token(DAOBase):
 		"""
 
 		update_string = """
-			INSERT INTO token (token, scope)
+			INSERT INTO token_t (token, scope)
 			VALUES (:token, :scope)
 		"""
 

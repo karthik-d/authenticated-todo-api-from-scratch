@@ -8,20 +8,35 @@ from .request_parser import Credentials_Parser
 
 from .exception import (
 	DidNotCreateTokenException,
-	TokenCreationDeniedException
+	TokenCreationDeniedException,
+	EmptyTokenListException,
+	TokenDoesNotExistException
 )
 
 
 @auth_nspace.route(
 	'/token', 
-	methods=[ 'POST' ],
-	endpoint='auth-token'
+	methods=[ 'GET', 'POST' ],
+	endpoint='auth-tokens'
 )
-class Token(Resource):	
+class TokenList(Resource):	
 
-	#@todo_nspace.doc('create_todo')
-	#@todo_nspace.response(201, "Following tasks were added to the todo list + { created tasks' details }")
-	#@todo_nspace.response(500, "Could not create task")
+	@auth_nspace.marshal_with(token_model)
+	def get(self):
+		"""
+		Display all active tokens for the API
+		"""
+
+		tokens = TokenDAO.all()
+		if not tokens:
+			raise EmptyTodoListException("No active tokens for the API")
+		else:
+			return tokens, 200
+
+
+	#@auth_nspace.doc('create_todo')
+	#@auth_nspace.response(201, "Following tasks were added to the todo list + { created tasks' details }")
+	#@auth_nspace.response(500, "Could not create task")
 	@auth_nspace.marshal_list_with(token_model)
 	def post(self):
 		"""
@@ -37,3 +52,26 @@ class Token(Resource):
 			raise DidNotCreateTokenException("Could not create task")
 		else:
 			return token_row, 201
+
+
+@auth_nspace.route(
+	'/token/<int:id>', 
+	methods=[ 'GET' ],
+	endpoint='auth-token'
+)
+class Token(Resource):	
+
+	@auth_nspace.doc('get_token')
+	@auth_nspace.response(200, "{ requested token }")
+	@auth_nspace.response(404, "Token with ID {id} doesn't exist")
+	@auth_nspace.marshal_with(token_model)
+	def get(self, id):
+		"""
+		Display id-speicified token for the API
+		"""
+
+		token = TokenDAO.get_by_id(id)
+		if token is None:
+			raise TokenDoesNotExistException("Token with ID {id_} doesn't exist".format(id_=id))
+		else:
+			return token, 200

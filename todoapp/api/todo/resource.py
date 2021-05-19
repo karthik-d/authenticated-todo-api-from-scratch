@@ -6,7 +6,7 @@ to registers their routes to the todo namespace
 from flask_restplus import Resource
 from datetime import date
 
-from todoapp.api.auth import AUTH_NAME
+from todoapp.api.auth import AUTH_NAME, require_token
 from todoapp.core.dao.todo import Todo as TodoDAO
 from .namespace import todo_nspace
 from .model import TODO as todo_model
@@ -20,13 +20,16 @@ from .exception import (
 	DidNotDeleteTodoException
 )
 
-
+@require_token
 @todo_nspace.route(
 	'/', 
 	methods=[ 'GET', 'POST' ],
 	endpoint='todos'
 )
 class TodoList(Resource):
+
+	def __init__(self, *args, **kwargs):
+		super(TodoList, self).__init__(*args, **kwargs)
 
 	@todo_nspace.doc('list_todos', security=[{AUTH_NAME: ['read', 'write']}])
 	@todo_nspace.response(200, "{ list of all tasks } ( OR ) No tasks in the todo-list")
@@ -35,6 +38,7 @@ class TodoList(Resource):
 		"""
 		List all the tasks
 		"""
+		
 		todos = TodoDAO.all()
 		if not todos:
 			raise EmptyTodoListException("No tasks in the todo-list")

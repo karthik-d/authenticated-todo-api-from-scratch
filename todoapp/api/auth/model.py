@@ -4,7 +4,7 @@ from .namespace import auth_nspace
 from .custom_fields import Scope
 
 
-TOKEN = auth_nspace.model('Todo',
+TOKEN = auth_nspace.model('Token',
 	{
 		'id': fields.Integer(
 			readonly=True,
@@ -20,11 +20,12 @@ TOKEN = auth_nspace.model('Todo',
 			required=True,
 			description='Integer (0, 1, or 2) for (read-only, read-write, admin)',
 			attribute='scope'
-			)
+			),
+		'URI': fields.Url('api.auth-token')
 	}
 )
 
-EXCEPTION = auth_nspace.model('TodoException',
+EXCEPTION = auth_nspace.model('TokenException',
 	{
 		'HTTP_status': fields.Integer(
 			description='The HTTP status code for the response',
@@ -36,3 +37,16 @@ EXCEPTION = auth_nspace.model('TodoException',
 		)
 	}
 )
+
+AUTH_EXCEPTION = auth_nspace('AuthorizationException',
+	{
+		'HTTP_status': fields.Integer(
+			description='The HTTP status code for the response',
+			attribute='http_code'
+		),
+		'message': fields.String(
+			description='Description of the error/exception',
+			attribute='message'
+		),
+		'Token_Generation_URI': fields.Url
+	})

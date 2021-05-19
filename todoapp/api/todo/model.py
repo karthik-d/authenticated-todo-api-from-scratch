@@ -35,7 +35,7 @@ TODO = todo_nspace.model('Todo',
 				description='Completion status of the task',
 				attribute='status'
 				),
-		'URI': fields.Url('api.todo')
+		'URI': fields.Url('api.todo', absolute=True)
 	}
 )
 
