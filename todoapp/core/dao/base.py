@@ -1,6 +1,9 @@
 import todoapp.core.db as db
 
 class DAOBase(object):
+
+	def __init__(self, *args, **kwargs):
+		pass
 	
 	@classmethod 
 	def exec_retrieve(cls, query, **params):

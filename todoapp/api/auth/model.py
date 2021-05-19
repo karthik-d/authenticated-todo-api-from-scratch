@@ -12,7 +12,7 @@ TOKEN = auth_nspace.model('Todo',
 			),
 		'token': fields.String(
 			required=True, 
-			description='A unique 10-character string',
+			description='A unique 36-character string',
 			attribute='task'
 			),
 		'read_only': fields.Boolean(
@@ -23,7 +23,7 @@ TOKEN = auth_nspace.model('Todo',
 	}
 )
 
-EXCEPTION = todo_nspace.model('TodoException',
+EXCEPTION = auth_nspace.model('TodoException',
 	{
 		'HTTP_status': fields.Integer(
 			description='The HTTP status code for the response',

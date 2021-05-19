@@ -12,9 +12,8 @@ from .base import DAOBase
 
 class Todo(DAOBase):
 	
-	def __init__(self):
-		self.counter = 0
-		self.todos = []
+	def __init__(self, *args, **kwargs):
+		super(Todo, self).__init__(*args, **kwargs)
 
 	@classmethod
 	def all(cls):

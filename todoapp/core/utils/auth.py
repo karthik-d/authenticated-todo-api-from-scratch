@@ -1,4 +1,5 @@
 from flask import current_app 
+import uuid
 
 
 def validate_admin(uname, passwd):
@@ -9,4 +10,5 @@ def validate_admin(uname, passwd):
 	return True 
 
 
-def generate_token
+def generate_token():
+	return str(uuid.uuid4())
