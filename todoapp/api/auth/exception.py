@@ -44,7 +44,7 @@ class ActionForbiddenException(AuthException):
 
 	def __init__(self, message="Action not allowed. Needs higher scope", *args, **kwargs):
 		http_code = 403
-		super(TokenRequiredException, self).__init__(http_code, message, *args, **kwargs)
+		super(ActionForbiddenException, self).__init__(http_code, message, *args, **kwargs)
 
 
 class InvalidTokenException(AuthException):

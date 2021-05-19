@@ -52,7 +52,7 @@ AUTH_EXCEPTION = auth_nspace.model('AuthorizationException',
 			description='Header field-name to supply the token',
 			attribute='token_field'
 		),
-		'Token_URL': fields.String(
+		'Token_Generation_URL': fields.String(
 			description='URL to generate API tokens',
 			attribute='token_gen_url'
 		)

@@ -7,6 +7,12 @@ AUTH_TOKEN_FIELD = 'X-Api-Key'
 
 AUTH_TOKEN_GEN_URL = '/oauth/authorize'
 
+ACCESS_SCOPE = {
+	'readonly' : 0,
+	'readwrite': 1,
+	'admin' : 	2
+}
+
 AUTH_SPEC = {
 	AUTH_NAME: {
 		'type' : 'oauth2',

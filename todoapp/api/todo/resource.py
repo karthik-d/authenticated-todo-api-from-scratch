@@ -6,7 +6,13 @@ to registers their routes to the todo namespace
 from flask_restplus import Resource
 from datetime import date
 
-from todoapp.api.auth import AUTH_NAME, require_token
+from todoapp.api.auth import (
+	AUTH_NAME, 
+	ACCESS_SCOPE, 
+	require_token,
+	require_accesslevel
+)
+
 from todoapp.core.dao.todo import Todo as TodoDAO
 from .namespace import todo_nspace
 from .model import TODO as todo_model
@@ -34,6 +40,7 @@ class TodoList(Resource):
 	@todo_nspace.doc('list_todos', security=[{AUTH_NAME: ['read', 'write']}])
 	@todo_nspace.response(200, "{ list of all tasks } ( OR ) No tasks in the todo-list")
 	@todo_nspace.marshal_list_with(todo_model)
+	@require_accesslevel(ACCESS_SCOPE.get('readonly'))
 	def get(self):
 		"""
 		List all the tasks
@@ -45,6 +52,8 @@ class TodoList(Resource):
 		else:
 			return todos, 200
 
+
+	@require_accesslevel(ACCESS_SCOPE.get('readwrite'))
 	@todo_nspace.doc('create_todo')
 	@todo_nspace.response(201, "Following tasks were added to the todo list + { created tasks' details }")
 	@todo_nspace.response(500, "Could not create task")
