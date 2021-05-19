@@ -5,11 +5,13 @@ to registers their routes to the todo namespace
 
 from flask_restplus import Resource
 from flask import Request
+from datetime import date
 
 from todoapp.core.dao.todo import Todo as TodoDAO
-from .model import todo_nspace, todopatch_parser
+from .model import todo_nspace
 from .model import TODO as todo_model
 from .model import TODO_WITH_MESSAGE as todo_msg_model
+from .request_parser import TodoPatch_Parser, DateArg_Parser
 
 from .exception import (
 	EmptyTodoListException, 
@@ -52,7 +54,7 @@ class TodoList(Resource):
 		else:
 			return {
 					"data": todo,
-					"message": "Following todos were created"
+					"message": "Following tasks were added to the todo list"
 					}, 201
 
 
@@ -80,7 +82,7 @@ class OverdueTodoList(Resource):
 		else:
 			return {
 					"data": todos,
-					"message": "Following todos are overdue (not finished and due before today)"
+					"message": "Following tasks are overdue (not finished and due before today)"
 					}, 200
 
 
@@ -89,26 +91,30 @@ class OverdueTodoList(Resource):
 	methods=[ 'GET' ], 
 	endpoint='todos_by_due_date'
 )
-class FinsishedTodoList(Resource):
+class TodoListByDueDate(Resource):
 	"""
-	Resource that provides and endpoint to all finished todos
-	A finsihed todo has status "Finished"
+	Resource that provides and endpoint to todos due on a specific day
+	This determined by the due_date argument passed in the URL
+	If no date is passed, current date is used
 	"""
 
 	@todo_nspace.doc('list_todos')
 	@todo_nspace.marshal_list_with(todo_msg_model)
 	def get(self):
 		"""
-		List all the finished tasks
+		List all the "Unfinished" tasks due on 'due_date' in args if specified, else current date
 		"""
 
-		todos = TodoDAO.finished()
+		payload = DateArg_Parser.parse_args()
+		due_by = payload.get('due_by', date.today())
+		due_by_str = due_by.strftime('%Y-%m-%d')
+		todos = TodoDAO.due_on(due_by)
 		if not todos:
-			raise EmptyTodoListException("No tasks are finished")
+			raise EmptyTodoListException("No tasks are due on {date}".format(date=due_by_str))
 		else:
 			return {
 					"data": todos,
-					"message": "Following todos are finished"
+					"message": "Following 'unfinished' tasks are due on {date}".format(date=due_by_str)
 					}, 200
 
 
@@ -136,7 +142,7 @@ class FinsishedTodoList(Resource):
 		else:
 			return {
 					"data": todos,
-					"message": "Following todos are finished"
+					"message": "Following tasks are finished"
 					}, 200
 
 
@@ -163,7 +169,7 @@ class Todo(Resource):
 			return todo
 
 	@todo_nspace.doc('delete_todo')
-	@todo_nspace.response(200, 'Following todo was deleted')
+	@todo_nspace.response(200, 'Following task was deleted')
 	@todo_nspace.marshal_with(todo_msg_model)
 	def delete(self, id):
 		"""
@@ -172,7 +178,7 @@ class Todo(Resource):
 
 		todo = TodoDAO.get(id)
 		if todo is None:
-			raise TodoDoesNotExistException("Todo {} doesn't exist".format(id))
+			raise TodoDoesNotExistException("Task with ID {id_} doesn't exist".format(id_=id))
 
 		id_ = TodoDAO.delete(id)
 		if id_ is None:
@@ -193,21 +199,21 @@ class Todo(Resource):
 
 		todo = TodoDAO.update(id, todo_nspace.payload)
 		if todo is None:
-			raise TodoDoesNotExistException("Todo {} doesn't exits".format(id))
+			raise TodoDoesNotExistException("Task with ID {id_} doesn't exist".format(id_=id))
 		else:
 			return {
 					"data": todo,
-					"message": "Todo was updated to the following"
+					"message": "Task was updated as follows"
 					}, 200
 
-	@todo_nspace.response(200, 'Todo was updated to the following')
+	@todo_nspace.response(200, 'Task was updated to the following')
 	@todo_nspace.marshal_with(todo_msg_model)
 	def patch(self, id):
 		"""
 		[Partially] Update a todo entity, by specifying ONLY the fields to be modified
 		"""
 
-		payload = todopatch_parser.parse_args()
+		payload = TodoPatch_Parser.parse_args()
 		todo = TodoDAO.patch_update(id, payload)
 		if todo is None:
 			raise TodoDoesNotExistException("Todo {} doesn't exits".format(id))

@@ -71,6 +71,24 @@ class Todo(DAOBase):
 		return result.fetchall()
 
 	@classmethod
+	def due_on(cls, due_date):
+		"""
+		Retrieves unfinished task rows from the 'todo' relation
+		that are due on 'due_date'
+		Returns a list of 'sqlite3 Row objects'
+		"""
+
+		query_string = """
+			SELECT * 
+			FROM todo
+			WHERE due_by = :date
+			  AND status <> "Finished"
+		"""
+		date = due_date.strftime('%Y-%m-%d')
+		result = cls.exec_retrieve(query_string, date=date)
+		return result.fetchall()
+
+	@classmethod
 	def get(cls, id_):
 		query_string = """
 			SELECT *
