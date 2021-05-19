@@ -39,6 +39,7 @@ class Status(fields.String):
 
 	def __init__(self, *args, **kwargs):
 		super(Status, self).__init__(*args, **kwargs)
+		self.default = Status.representation.get('notstarted')
 
 
 	def format(self, value):
@@ -49,11 +50,9 @@ class Status(fields.String):
 		"""
 
 		value = super(Status, self).format(value)
-		if value is None:
+		if value in (None, 'None'):
 			return None 
-		if value == 'None':
-			return None
-		
+
 		value_squeezed = value.replace(' ', '').lower()
 		if value_squeezed in Status.representation.keys():
 			return Status.representation[value_squeezed] 
@@ -74,6 +73,18 @@ class Status(fields.String):
 			return cls.representation[value_squeezed] 
 		else:
 			raise cls.format_violation
+
+	@classmethod 
+	def clean(cls, value):
+		"""
+		Cleans up the value before entry into DB
+		The supplied value MUST already be validated as 
+		a valid slug. This method merely tranforms it into
+		the representation format for storage
+		"""
+
+		value_squeezed = value.replace(' ', '').lower()
+		return cls.representation[value_squeezed]
 
 
 

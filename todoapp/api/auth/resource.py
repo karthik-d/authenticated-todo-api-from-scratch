@@ -21,6 +21,8 @@ from .exception import (
 )
 class TokenList(Resource):	
 
+	@auth_nspace.doc('list_tokens')
+	@auth_nspace.response(200, "{ tokens list } OR No active tokends for the API")
 	@auth_nspace.marshal_with(token_model)
 	def get(self):
 		"""
@@ -34,9 +36,9 @@ class TokenList(Resource):
 			return tokens, 200
 
 
-	#@auth_nspace.doc('create_todo')
-	#@auth_nspace.response(201, "Following tasks were added to the todo list + { created tasks' details }")
-	#@auth_nspace.response(500, "Could not create task")
+	@auth_nspace.doc('create_token')
+	@auth_nspace.response(201, "Token was created")
+	@auth_nspace.response(500, "Could not create token")
 	@auth_nspace.marshal_list_with(token_model)
 	def post(self):
 		"""

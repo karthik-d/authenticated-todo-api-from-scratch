@@ -18,6 +18,7 @@ from .namespace import todo_nspace
 from .model import TODO as todo_model
 from .model import TODO_WITH_MESSAGE as todo_msg_model
 from .request_parser import TodoPatch_Parser, DateArg_Parser
+from .custom_fields import Status
 
 from .exception import (
 	EmptyTodoListException, 
@@ -37,10 +38,11 @@ class TodoList(Resource):
 	def __init__(self, *args, **kwargs):
 		super(TodoList, self).__init__(*args, **kwargs)
 
+	
+	@require_accesslevel(ACCESS_SCOPE.get('readonly'))
 	@todo_nspace.doc('list_todos', security=[{AUTH_NAME: ['read', 'write']}])
 	@todo_nspace.response(200, "{ list of all tasks } ( OR ) No tasks in the todo-list")
 	@todo_nspace.marshal_list_with(todo_model)
-	@require_accesslevel(ACCESS_SCOPE.get('readonly'))
 	def get(self):
 		"""
 		List all the tasks
@@ -63,7 +65,9 @@ class TodoList(Resource):
 		"""
 		Create a new task (status - optional)
 		"""
-
+		
+		if todo_nspace.payload.get('status', None) is None:
+			todo_nspace.payload['status'] = Status().default
 		todo = TodoDAO.create(todo_nspace.payload)
 		if todo is None:
 			raise DidNotCreateTodoException("Could not create task")
@@ -74,6 +78,7 @@ class TodoList(Resource):
 					}, 201
 
 
+@require_token
 @todo_nspace.route(
 	'/overdue', 
 	methods=[ 'GET' ], 
@@ -85,6 +90,7 @@ class OverdueTodoList(Resource):
 	An overdue todo is "due before today" AND "unfinished"
 	"""
 
+	@require_accesslevel(ACCESS_SCOPE.get('readonly'))
 	@todo_nspace.doc('list_todos')
 	@todo_nspace.response(200, "Following tasks are overdue + { overdue tasks } ( OR ) No tasks are overdue")
 	@todo_nspace.marshal_list_with(todo_msg_model)
@@ -103,6 +109,7 @@ class OverdueTodoList(Resource):
 					}, 200
 
 
+@require_token
 @todo_nspace.route(
 	'/due', 
 	methods=[ 'GET' ], 
@@ -115,6 +122,7 @@ class TodoListByDueDate(Resource):
 	If no date is passed, current date is used
 	"""
 
+	@require_accesslevel(ACCESS_SCOPE.get('readonly'))
 	@todo_nspace.doc('list_todos')
 	@todo_nspace.response(200, "Following 'unfinished' tasks are due on {date} + { due tasks }")
 	@todo_nspace.marshal_list_with(todo_msg_model)
@@ -124,7 +132,6 @@ class TodoListByDueDate(Resource):
 		"""
 
 		payload = DateArg_Parser.parse_args()
-		print(payload)
 		due_date = payload.get('due_date', date.today())
 		due_date_str = due_date.strftime('%Y-%m-%d')
 		todos = TodoDAO.due_on(due_date)
@@ -137,6 +144,7 @@ class TodoListByDueDate(Resource):
 					}, 200
 
 
+@require_token
 @todo_nspace.route(
 	'/finished', 
 	methods=[ 'GET' ], 
@@ -148,6 +156,7 @@ class FinsishedTodoList(Resource):
 	A finsihed todo has status "Finished"
 	"""
 
+	@require_accesslevel(ACCESS_SCOPE.get('readonly'))
 	@todo_nspace.doc('list_todos')
 	@todo_nspace.response(200, "Following tasks are finished + { finished tasks } ( OR ) No tasks are finished")
 	@todo_nspace.marshal_list_with(todo_msg_model)
@@ -166,6 +175,7 @@ class FinsishedTodoList(Resource):
 					}, 200
 
 
+@require_token
 @todo_nspace.route(
 	'/<int:id>', 
 	methods=[ 'GET', 'DELETE', 'PUT', 'PATCH' ], 
@@ -178,6 +188,7 @@ class Todo(Resource):
 	Specified by the id parameter in the URL
 	"""
 
+	@require_accesslevel(ACCESS_SCOPE.get('readonly'))
 	@todo_nspace.doc('get_todo')
 	@todo_nspace.response(200, "{ requested task }")
 	@todo_nspace.response(404, "Task with ID {id} doesn't exist")
@@ -193,6 +204,8 @@ class Todo(Resource):
 		else:
 			return todo
 
+	
+	@require_accesslevel(ACCESS_SCOPE.get('readwrite'))
 	@todo_nspace.doc('delete_todo')
 	@todo_nspace.response(200, "Following task was deleted + { deleted task details }")
 	@todo_nspace.response(404, "Task with ID {id} doesn't exist")
@@ -215,15 +228,20 @@ class Todo(Resource):
 					"message": "Following task was deleted"
 					}, 200
 
+	
+	@require_accesslevel(ACCESS_SCOPE.get('readwrite'))
 	@todo_nspace.expect(todo_model, validate=True)
 	@todo_nspace.response(200, "Task was updated as follows + { udpated task details }")
 	@todo_nspace.response(404, "Task with ID {id} doesn't exist")
 	@todo_nspace.marshal_with(todo_msg_model)
 	def put(self, id):
 		"""
-		[Entirely] Update a todo entity, by specifying the new state of ALL the fields
+		[Entirely] Update a todo entity, by specifying the new state of ALL the fields. 
+		If the optional 'status' is omitted, it is replaced with default value
 		"""
-
+		
+		if todo_nspace.payload.get('status', None) is None:
+			todo_nspace.payload['status'] = Status().default
 		todo = TodoDAO.update(id, todo_nspace.payload)
 		if todo is None:
 			raise TodoDoesNotExistException("Task with ID {id_} doesn't exist".format(id_=id))
@@ -233,6 +251,8 @@ class Todo(Resource):
 					"message": "Task was updated as follows"
 					}, 200
 
+	
+	@require_accesslevel(ACCESS_SCOPE.get('readwrite'))
 	@todo_nspace.response(200, "Task was updated as follows + { udpated task details }")
 	@todo_nspace.response(404, "Task with ID {id} doesn't exist")
 	@todo_nspace.marshal_with(todo_msg_model)

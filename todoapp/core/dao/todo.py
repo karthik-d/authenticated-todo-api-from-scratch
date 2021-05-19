@@ -40,7 +40,7 @@ class Todo(DAOBase):
 		By default, they are ordered by the due-date
 		"""
 
-		finished_status = Status().format('finished')
+		finished_status = Status.representation.get('finished')
 		query_string = """
 			SELECT * 
 			FROM todo
@@ -62,8 +62,7 @@ class Todo(DAOBase):
 		By default, they are ordered by the due-date
 		"""
 
-		finished_status = Status().format('finished')
-		print(finished_status)
+		finished_status = Status.representation.get('finished')
 		query_string = """
 			SELECT * 
 			FROM todo
@@ -82,12 +81,13 @@ class Todo(DAOBase):
 		Returns a list of 'sqlite3 Row objects'
 		"""
 
+		finished_status = Status.representation.get('finished')
 		query_string = """
 			SELECT * 
 			FROM todo
 			WHERE due_by = :date
-			  AND status <> "Finished"
-		"""
+			  AND status <> "{status}"
+		""".format(status=finished_status)
 		date = due_date.strftime('%Y-%m-%d')
 		result = cls.exec_retrieve(query_string, date=date)
 		return result.fetchall()
@@ -110,7 +110,7 @@ class Todo(DAOBase):
 		"""
 		todo_task = data.get('task')
 		todo_due = data.get('due_by')
-		todo_status = Status().format(data.get('status'))
+		todo_status = Status.clean(data.get('status'))
 		resp_cursor = cls.exec_update(
 			update_string, 
 			task=todo_task,
@@ -138,7 +138,7 @@ class Todo(DAOBase):
 		"""
 		todo_task = data.get('task')
 		todo_due = data.get('due_by')
-		todo_status = Status().format(data.get('status'))
+		todo_status = Status.clean(data.get('status'))
 		resp_cursor = cls.exec_update(
 			update_string, 
 			id_=id_,
