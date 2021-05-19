@@ -70,7 +70,7 @@ class DidNotCreateTodoException(TodoException):
 
 class DidNotDeleteTodoException(TodoException):
 	"""
-	When the todo could not be created,
+	When the todo could not be deleted,
 	return a custom error message
 	"""
 

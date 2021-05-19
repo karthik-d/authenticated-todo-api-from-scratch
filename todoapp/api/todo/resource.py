@@ -29,6 +29,7 @@ from .exception import (
 class TodoList(Resource):
 
 	@todo_nspace.doc('list_todos')
+	@todo_nspace.response(200, "{ list of all tasks } ( OR ) No tasks in the todo-list")
 	@todo_nspace.marshal_list_with(todo_model)
 	def get(self):
 		"""
@@ -36,11 +37,13 @@ class TodoList(Resource):
 		"""
 		todos = TodoDAO.all()
 		if not todos:
-			raise EmptyTodoListException
+			raise EmptyTodoListException("No tasks in the todo-list")
 		else:
 			return todos, 200
 
 	@todo_nspace.doc('create_todo')
+	@todo_nspace.response(201, "Following tasks were added to the todo list + { created tasks' details }")
+	@todo_nspace.response(500, "Could not create task")
 	@todo_nspace.expect(todo_model, validate=True)
 	@todo_nspace.marshal_with(todo_msg_model)
 	def post(self):
@@ -50,7 +53,7 @@ class TodoList(Resource):
 
 		todo = TodoDAO.create(todo_nspace.payload)
 		if todo is None:
-			raise DidNotCreateTodoException
+			raise DidNotCreateTodoException("Could not create task")
 		else:
 			return {
 					"data": todo,
@@ -70,6 +73,7 @@ class OverdueTodoList(Resource):
 	"""
 
 	@todo_nspace.doc('list_todos')
+	@todo_nspace.response(200, "Following tasks are overdue + { overdue tasks } ( OR ) No tasks are overdue")
 	@todo_nspace.marshal_list_with(todo_msg_model)
 	def get(self):
 		"""
@@ -99,6 +103,7 @@ class TodoListByDueDate(Resource):
 	"""
 
 	@todo_nspace.doc('list_todos')
+	@todo_nspace.response(200, "Following 'unfinished' tasks are due on {date} + { due tasks }")
 	@todo_nspace.marshal_list_with(todo_msg_model)
 	def get(self):
 		"""
@@ -125,11 +130,12 @@ class TodoListByDueDate(Resource):
 )
 class FinsishedTodoList(Resource):
 	"""
-	Resource that provides and endpoint to all finished todos
+	Resource that provides an endpoint to all finished todos
 	A finsihed todo has status "Finished"
 	"""
 
 	@todo_nspace.doc('list_todos')
+	@todo_nspace.response(200, "Following tasks are finished + { finished tasks } ( OR ) No tasks are finished")
 	@todo_nspace.marshal_list_with(todo_msg_model)
 	def get(self):
 		"""
@@ -151,11 +157,16 @@ class FinsishedTodoList(Resource):
 	methods=[ 'GET', 'DELETE', 'PUT', 'PATCH' ], 
 	endpoint='todo'
 )
-@todo_nspace.response(404, 'Could not find that todo')
 @todo_nspace.param('id', 'The task ID (unique) ')
 class Todo(Resource):
+	"""
+	Resource that provides an endpoint to a single todo instance
+	Specified by the id parameter in the URL
+	"""
 
 	@todo_nspace.doc('get_todo')
+	@todo_nspace.response(200, "{ requested task }")
+	@todo_nspace.response(404, "Task with ID {id} doesn't exist")
 	@todo_nspace.marshal_with(todo_model)
 	def get(self, id):
 		"""
@@ -164,12 +175,13 @@ class Todo(Resource):
 
 		todo = TodoDAO.get(id)
 		if todo is None:
-			todo_nspace.abort(404, "Todo {} doesn't exist".format(id))
+			raise TodoDoesNotExistException("Task with ID {id_} doesn't exist".format(id_=id))
 		else:
 			return todo
 
 	@todo_nspace.doc('delete_todo')
-	@todo_nspace.response(200, 'Following task was deleted')
+	@todo_nspace.response(200, "Following task was deleted + { deleted task details }")
+	@todo_nspace.response(404, "Task with ID {id} doesn't exist")
 	@todo_nspace.marshal_with(todo_msg_model)
 	def delete(self, id):
 		"""
@@ -186,11 +198,12 @@ class Todo(Resource):
 		else:
 			return {
 					"data": todo,
-					"message": "Following todo was deleted"
+					"message": "Following task was deleted"
 					}, 200
 
 	@todo_nspace.expect(todo_model, validate=True)
-	@todo_nspace.response(200, 'Todo was updated to the following')
+	@todo_nspace.response(200, "Task was updated as follows + { udpated task details }")
+	@todo_nspace.response(404, "Task with ID {id} doesn't exist")
 	@todo_nspace.marshal_with(todo_msg_model)
 	def put(self, id):
 		"""
@@ -206,7 +219,8 @@ class Todo(Resource):
 					"message": "Task was updated as follows"
 					}, 200
 
-	@todo_nspace.response(200, 'Task was updated to the following')
+	@todo_nspace.response(200, "Task was updated as follows + { udpated task details }")
+	@todo_nspace.response(404, "Task with ID {id} doesn't exist")
 	@todo_nspace.marshal_with(todo_msg_model)
 	def patch(self, id):
 		"""
@@ -216,9 +230,9 @@ class Todo(Resource):
 		payload = TodoPatch_Parser.parse_args()
 		todo = TodoDAO.patch_update(id, payload)
 		if todo is None:
-			raise TodoDoesNotExistException("Todo {} doesn't exits".format(id))
+			raise TodoDoesNotExistException("Task with ID {id_} doesn't exist".format(id_=id))
 		else:
 			return {
 					"data": todo,
-					"message": "Todo was updated to the following"
+					"message": "Task was updated as follows"
 					}, 200
