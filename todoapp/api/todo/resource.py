@@ -7,8 +7,9 @@ from flask_restplus import Resource
 from flask import Request
 from datetime import date
 
+from todoapp.api.auth import AUTH_NAME
 from todoapp.core.dao.todo import Todo as TodoDAO
-from .model import todo_nspace
+from .namespace import todo_nspace
 from .model import TODO as todo_model
 from .model import TODO_WITH_MESSAGE as todo_msg_model
 from .request_parser import TodoPatch_Parser, DateArg_Parser
@@ -28,7 +29,7 @@ from .exception import (
 )
 class TodoList(Resource):
 
-	@todo_nspace.doc('list_todos')
+	@todo_nspace.doc('list_todos', security=[{AUTH_NAME: ['read', 'write']}])
 	@todo_nspace.response(200, "{ list of all tasks } ( OR ) No tasks in the todo-list")
 	@todo_nspace.marshal_list_with(todo_model)
 	def get(self):

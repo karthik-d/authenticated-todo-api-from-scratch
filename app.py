@@ -4,6 +4,8 @@ from werkzeug.contrib.fixers import ProxyFix
 
 
 def register_blueprints(app):
+	from todoapp.authpages import blueprint as Auth 
+	app.register_blueprint(Auth, url_prefix='/oauth')
 	from todoapp.api import blueprint as API
 	app.register_blueprint(API, url_prefix=None)
 

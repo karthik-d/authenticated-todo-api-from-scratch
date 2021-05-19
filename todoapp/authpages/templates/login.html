@@ -1,0 +1,33 @@
+<!doctype html>
+
+<html>
+	<head>
+		<title> API Authorization </title>
+		<h2> Enter Credentials </h2>
+	</head>
+	<body>
+
+		<form action="/oauth/authorize" method="POST">
+
+			<div>
+				<label for='uname_ip'>Username: </label>
+				<input id='uname_ip' name='uname' type='text' />
+			</div>
+
+			<div>
+				<label for='passwd_ip'>Password: </label>
+				<input id='passwd_ip' name='passwd' type='password' />
+			</div>
+
+			<div>
+				<input type="submit" value="Sign in">
+			</div>
+
+			<div>
+				<input name="redirect_url" type="hidden" value="{{redirect_url}}">
+			</div>
+
+		</form>
+		
+	</body>
+</html>

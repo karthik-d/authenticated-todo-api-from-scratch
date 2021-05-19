@@ -3,7 +3,7 @@ Creates the API blueprint for this package
 Registers all required namespaces to the blueprint
 """
 
-from flask import Blueprint, current_app
+from flask import Blueprint
 from flask_restplus import Api
 from jsonschema import FormatChecker
 
