@@ -7,7 +7,7 @@
 	</head>
 	<body>
 
-		<form action="/oauth/authorize" method="POST">
+		<form action="/api-auth/token" method="POST">
 
 			<div>
 				<label for='uname_ip'>Username: </label>
@@ -20,11 +20,12 @@
 			</div>
 
 			<div>
-				<input type="submit" value="Sign in">
+				<label for='readonly_ip'>Read Only ? </label>
+				<input id='readonly_ip' name='readonly' type='checkbox' />
 			</div>
 
 			<div>
-				<input name="redirect_url" type="hidden" value="{{redirect_url}}">
+				<input type="submit" value="Sign in">
 			</div>
 
 		</form>

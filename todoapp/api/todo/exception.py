@@ -1,5 +1,3 @@
-#from flask_restplus import marshal
-
 from .namespace import todo_nspace
 from .model import EXCEPTION as exception_model
 from .model import EXCEPTION_WITH_DATA as exception_data_model

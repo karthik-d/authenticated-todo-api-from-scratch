@@ -9,3 +9,5 @@ class ApplicationConfig:
 	SWAGGER_UI_OAUTH_CLIENT_ID = 'MyClientId'
 	SWAGGER_UI_OAUTH_REALM = ''
 	SWAGGER_UI_OAUTH_APP_NAME = 'Demo'
+	ADMIN_USERNAME = 'admin'
+	ADMIN_PASSWORD = 'admin'

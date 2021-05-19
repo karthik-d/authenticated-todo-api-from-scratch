@@ -6,11 +6,11 @@ A Parser object to read input credentials form user
 along with metadata from the form received on POST request
 for token generation
 """
-TodoPatch_Parser = reqparse.RequestParser(
+Credentials_Parser = reqparse.RequestParser(
 	bundle_errors=True,
 	trim=True
 )
-TodoPatch_Parser.add_argument(
+Credentials_Parser.add_argument(
 	name='uname',
 	default=None,
 	required=True,
@@ -18,25 +18,28 @@ TodoPatch_Parser.add_argument(
 	action='store',
 	location='form',
 	store_missing=True,
-	nullable=False
+	nullable=False,
+	dest='username'
 )
-TodoPatch_Parser.add_argument(
+Credentials_Parser.add_argument(
 	name='passwd',
-	default=None
+	default=None,
 	required=True,
 	help='Password for authorization',
 	action='store',
 	location='form',
 	store_missing=True,
-	nullable=False
+	nullable=False,
+	dest='password'
 )
-TodoPatch_Parser.add_argument(
-	name='',
+Credentials_Parser.add_argument(
+	name='readonly',
 	required=False,
-	help=Status.help_string,
+	help='Boolean 1 if read-only, 0 if read-write',
 	action='store',
 	location='form',
 	store_missing=False,
 	nullable=False,
-	type=Status.check_status_input_format
+	type=inputs.boolean,
+	dest='read_only'
 )
