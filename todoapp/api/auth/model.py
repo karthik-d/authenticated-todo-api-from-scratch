@@ -1,6 +1,7 @@
 from flask_restplus import fields
 
 from .namespace import auth_nspace
+from .custom_fields import Scope
 
 
 TOKEN = auth_nspace.model('Todo',
@@ -15,7 +16,7 @@ TOKEN = auth_nspace.model('Todo',
 			description='A unique 36-character string',
 			attribute='token'
 			),
-		'scope': fields.Integer(
+		'scope': Scope(
 			required=True,
 			description='Integer (0, 1, or 2) for (read-only, read-write, admin)',
 			attribute='scope'

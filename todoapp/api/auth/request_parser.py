@@ -33,7 +33,7 @@ Credentials_Parser.add_argument(
 	dest='password'
 )
 Credentials_Parser.add_argument(
-	name='readonly',
+	name='scope',
 	required=False,
 	help='Boolean 1 if read-only, 0 if read-write',
 	action='store',
@@ -41,5 +41,5 @@ Credentials_Parser.add_argument(
 	store_missing=False,
 	nullable=False,
 	type=inputs.int_range(low=0, high=2),
-	dest='read_only'
+	dest='scope'
 )

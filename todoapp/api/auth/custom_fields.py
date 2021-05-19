@@ -8,12 +8,12 @@ Class input-validate method is also used for Request-Parser validation
 
 from flask_restplus import fields
 
-from .namespace import todo_nspace
+from .namespace import auth_nspace
 
 
 class Scope(fields.String):
 	"""
-	Custom field to store the status of a todo
+	Custom field to store the status of a token
 	Must be one of ( 'Not started', 'In progress', 'Finished' )
 	-> Case-INsensitive for input validation ( from request body )
 	-> Spaces NOT necessay for input validation ( from request body )
@@ -33,13 +33,13 @@ class Scope(fields.String):
 
 	help_string = "\
 	Scope of the token must be one of ( {scopes} ) representing ( {vals} ).".format(
-		scopes = ", ".join(representation.keys(),
-		vals = ", ", join(representation.values()))
+		scopes = ", ".join(map(str, representation.keys())),
+		vals = ", ".join(representation.values())
 	).strip()
 
 
 	def __init__(self, *args, **kwargs):
-		super(Status, self).__init__(*args, **kwargs)
+		super(Scope, self).__init__(*args, **kwargs)
 
 
 	def format(self, value):
@@ -49,15 +49,18 @@ class Scope(fields.String):
 		allowed choices
 		"""
 
-		value = super(Status, self).format(value)
-		
+		value = super(Scope, self).format(value)
+
 		if value is None:
 			return None 
+
+		if isinstance(value, str):
+			value = int(value)
 		
 		if value not in range(0, 3):
-			raise fields.MarshallingError(Status.format_violation)
+			raise fields.MarshallingError(Scope.format_violation)
 		else:
-			return Status.representation[value] 
+			return Scope.representation[value] 
 			
 
 

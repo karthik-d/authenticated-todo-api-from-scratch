@@ -41,18 +41,18 @@ class Token(DAOBase):
 		"""
 
 		update_string = """
-			INSERT INTO token (token, read_only)
-			VALUES (:token, :readonly)
+			INSERT INTO token (token, scope)
+			VALUES (:token, :scope)
 		"""
 
-		read_only = data.get('read_only')
+		scope = data.get('scope')
 		while True:
 			try:
 				token = generate_token()
 				resp_cursor = cls.exec_update(
 					update_string,
 					token=token,
-					readonly=read_only
+					scope=scope
 				)
 			except sqlite3.IntegrityError:
 				continue
