@@ -11,6 +11,8 @@ def register_blueprints(app):
 
 
 def register_error_handlers(app):
+	from todoapp.api.auth.exception import AuthException, auth_exception_handler
+	app.register_error_handler(AuthException, auth_exception_handler)
 	from todoapp.api.auth.exception import TokenException, token_exception_handler
 	app.register_error_handler(TokenException, token_exception_handler)
 	from todoapp.api.todo.exception import TodoException, todo_exception_handler

@@ -1,5 +1,6 @@
 """
-Specification of the authorization schemes allowed
+Authorization decorators to enforce authorization
+on request on demand by resouces
 """
 
 from functools import wraps
@@ -8,24 +9,12 @@ from flask import request
 
 from todoapp.core.utils.auth import validate_token
 from .custom_fields import Scope
+from .namespace import AUTH_TOKEN_FIELD
 
-
-AUTH_NAME = 'OAuth2_Implicit'
-
-AUTH_TOKEN_FIELD = 'X-Api-Key'
-
-AUTH_SPEC = {
-	AUTH_NAME: {
-		'type' : 'oauth2',
-		'description' : 'OAuth2 - Implicit Authentication Scheme with Scopes',
-		'flow' : 'implicit',
-		'authorizationUrl' : '/oauth/authorize',
-		'scopes' : {
-			'read' : 'Read-only access',
-			'write' : 'Read-Write access'
-		}
-	}
-}
+from .exception import (
+	TokenRequiredException, 
+	InvalidTokenException
+)
 
 
 class RequestAuth:
@@ -40,10 +29,10 @@ class RequestAuth:
 		if self.token_dict is None:
 			token_in = request.headers.get(AUTH_TOKEN_FIELD, None)
 			if token_in is None:
-				print("ERROR")
+				raise TokenRequiredException
 			token_d = validate_token(token_in)
 			if token_d is None:
-				print("ERROR")
+				raise InvalidTokenException
 			self.token_dict = token_d
 
 

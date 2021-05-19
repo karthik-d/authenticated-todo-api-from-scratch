@@ -32,6 +32,7 @@ TODO = todo_nspace.model('Todo',
 				),
 		'status': Status(
 				default='Not started',
+				required=False,
 				description='Completion status of the task',
 				attribute='status'
 				),

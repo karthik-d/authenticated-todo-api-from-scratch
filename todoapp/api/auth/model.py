@@ -21,7 +21,7 @@ TOKEN = auth_nspace.model('Token',
 			description='Integer (0, 1, or 2) for (read-only, read-write, admin)',
 			attribute='scope'
 			),
-		'URI': fields.Url('api.auth-token')
+		'URI': fields.Url('api.auth-token', absolute=True)
 	}
 )
 
@@ -38,7 +38,7 @@ EXCEPTION = auth_nspace.model('TokenException',
 	}
 )
 
-AUTH_EXCEPTION = auth_nspace('AuthorizationException',
+AUTH_EXCEPTION = auth_nspace.model('AuthorizationException',
 	{
 		'HTTP_status': fields.Integer(
 			description='The HTTP status code for the response',
@@ -48,5 +48,12 @@ AUTH_EXCEPTION = auth_nspace('AuthorizationException',
 			description='Description of the error/exception',
 			attribute='message'
 		),
-		'Token_Generation_URI': fields.Url
+		'Token_Header_Field': fields.String(
+			description='Header field-name to supply the token',
+			attribute='token_field'
+		),
+		'Token_URL': fields.String(
+			description='URL to generate API tokens',
+			attribute='token_gen_url'
+		)
 	})

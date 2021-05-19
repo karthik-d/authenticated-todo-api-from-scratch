@@ -49,9 +49,10 @@ class Status(fields.String):
 		"""
 
 		value = super(Status, self).format(value)
-		
 		if value is None:
 			return None 
+		if value == 'None':
+			return None
 		
 		value_squeezed = value.replace(' ', '').lower()
 		if value_squeezed in Status.representation.keys():
