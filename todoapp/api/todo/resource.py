@@ -4,7 +4,6 @@ to registers their routes to the todo namespace
 """
 
 from flask_restplus import Resource
-from flask import Request
 from datetime import date
 
 from todoapp.api.auth import AUTH_NAME

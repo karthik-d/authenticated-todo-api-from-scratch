@@ -12,19 +12,8 @@ AUTH_SPEC = {
 		'authorizationUrl' : '/oauth/authorize',
 		'scopes' : {
 			'read' : 'Read-only access',
-			'read-write' : 'Read-Write access',
-			'admin' : 'Admin access'
+			'write' : 'Read-Write access'
 		}
 	}
 }
 
-"""
-AUTH_NAME = 'apikey'
-AUTH_SPEC = {
-	'apikey': {
-        'type': 'apiKey',
-        'in': 'header',
-        'name': 'X-API-KEY'
-    }
-}
-"""

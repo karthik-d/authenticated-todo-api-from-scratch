@@ -16,11 +16,11 @@ class AuthorizationView(MethodView):
 
 	def get(self):
 		scopes = request.args.get('scope', '').split()
-		return render_template('login.html', redirect_url=redirect_url)
+		return render_template('login.html')
 
 	def post(self):
 		print(request.form)
 		redirect_url = request.form.get('redirect_url')
-		return redirect(redirect_url)
+		return "hello", 200
 
 auth_bprint.add_url_rule('/authorize', view_func=AuthorizationView.as_view('authorize_view'))
