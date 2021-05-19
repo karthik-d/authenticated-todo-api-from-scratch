@@ -111,15 +111,16 @@ class TodoListByDueDate(Resource):
 		"""
 
 		payload = DateArg_Parser.parse_args()
-		due_by = payload.get('due_by', date.today())
-		due_by_str = due_by.strftime('%Y-%m-%d')
-		todos = TodoDAO.due_on(due_by)
+		print(payload)
+		due_date = payload.get('due_date', date.today())
+		due_date_str = due_date.strftime('%Y-%m-%d')
+		todos = TodoDAO.due_on(due_date)
 		if not todos:
-			raise EmptyTodoListException("No tasks are due on {date}".format(date=due_by_str))
+			raise EmptyTodoListException("No tasks are due on {date}".format(date=due_date_str))
 		else:
 			return {
 					"data": todos,
-					"message": "Following 'unfinished' tasks are due on {date}".format(date=due_by_str)
+					"message": "Following 'unfinished' tasks are due on {date}".format(date=due_date_str)
 					}, 200
 
 

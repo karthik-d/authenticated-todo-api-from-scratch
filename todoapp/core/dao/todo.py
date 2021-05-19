@@ -40,7 +40,7 @@ class Todo(DAOBase):
 		By default, they are ordered by the due-date
 		"""
 
-		finished_status = Status.representation['finished']
+		finished_status = Status().format('finished')
 		query_string = """
 			SELECT * 
 			FROM todo
@@ -62,7 +62,8 @@ class Todo(DAOBase):
 		By default, they are ordered by the due-date
 		"""
 
-		finished_status = Status.representation['finished']
+		finished_status = Status().format('finished')
+		print(finished_status)
 		query_string = """
 			SELECT * 
 			FROM todo
@@ -109,7 +110,7 @@ class Todo(DAOBase):
 		"""
 		todo_task = data.get('task')
 		todo_due = data.get('due_by')
-		todo_status = data.get('status')
+		todo_status = Status().format(data.get('status'))
 		resp_cursor = cls.exec_update(
 			update_string, 
 			task=todo_task,
@@ -137,7 +138,7 @@ class Todo(DAOBase):
 		"""
 		todo_task = data.get('task')
 		todo_due = data.get('due_by')
-		todo_status = data.get('status')
+		todo_status = Status().format(data.get('status'))
 		resp_cursor = cls.exec_update(
 			update_string, 
 			id_=id_,

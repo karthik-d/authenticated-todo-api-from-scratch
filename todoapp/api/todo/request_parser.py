@@ -54,7 +54,7 @@ DateArg_Parser = reqparse.RequestParser(
 	trim=True
 )
 DateArg_Parser.add_argument(
-	name='due_by',
+	name='due_date',
 	required=False,
 	help='Due date in (yyyy-mm-dd) format',
 	action='store',
