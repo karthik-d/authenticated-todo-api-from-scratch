@@ -40,7 +40,7 @@ as per the conventions of oAuth2 authentication scheme
  - `state` : An arbitraray string that will be passed back along with the token to prevent CSRF attacks
  - `redirect_uri` : The URI to redirected to with the generated token
 
- The reuest will redirect to a `credentials` page where the admin username and password have to entered. The test values are set in config.py ( username: `admin` and password: `admin` )
+ The reuest will redirect to a `credentials` page where the admin username and password have to entered. The test values are set in [a relative link](config.py) ( username: `admin` and password: `admin` )
 
  If the credentials validate, the api-token is rendered back as JSON along with the `state` passed initially.
      
