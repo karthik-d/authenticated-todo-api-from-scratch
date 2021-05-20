@@ -1,5 +1,5 @@
 """
-Creates and registers all todo related Request-Parser definitions
+Creates all todo related Request-Parser definitions
 """
 
 from flask_restplus import reqparse, inputs

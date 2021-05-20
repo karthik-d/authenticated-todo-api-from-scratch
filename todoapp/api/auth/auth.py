@@ -7,9 +7,8 @@ from functools import wraps
 import types
 from flask import request
 
-from todoapp.core.utils.auth import validate_token
+from todoapp.core.utils.auth import AUTH_TOKEN_FIELD, validate_token
 from .custom_fields import Scope
-from .namespace import AUTH_TOKEN_FIELD
 
 from .exception import (
 	TokenRequiredException, 
@@ -44,6 +43,10 @@ class RequestAuth:
 		"""
 
 		if self.token_dict is None:
+			print(request.headers)
+			print(request.data)
+			print(request.values)
+			print(request.json)
 			tokens_supplied = request.headers.get(AUTH_TOKEN_FIELD, None)
 			if tokens_supplied is None:
 				raise TokenRequiredException
@@ -72,7 +75,6 @@ def require_token(ResourceClass):
 	Else, an instance of RequestAuth to the 
 	Resource-Class
 	"""
-
 	base_ctor = ResourceClass.__init__
 	def mod_ctor(self, *args, **kwargs):
 		base_ctor(self, *args, **kwargs)

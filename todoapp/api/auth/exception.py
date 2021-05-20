@@ -1,4 +1,5 @@
-from .namespace import auth_nspace, AUTH_TOKEN_GEN_URL, AUTH_TOKEN_FIELD
+from todoapp.core.utils.auth import AUTH_TOKEN_GEN_URL, AUTH_TOKEN_FIELD
+from .namespace import auth_nspace
 from .model import EXCEPTION as exception_model
 from .model import AUTH_EXCEPTION as auth_exception_model
 

@@ -43,3 +43,23 @@ Credentials_Parser.add_argument(
 	type=inputs.int_range(low=0, high=2),
 	dest='scope'
 )
+Credentials_Parser.add_argument(
+	name='redirect',
+	required=True,
+	help='Redirect URL to return token',
+	action='store',
+	location='form',
+	store_missing=False,
+	nullable=False,
+	dest='redirect'
+)
+Credentials_Parser.add_argument(
+	name='state',
+	required=True,
+	help='CSRF prevention string',
+	action='store',
+	location='form',
+	store_missing=False,
+	nullable=False,
+	dest='state'
+)

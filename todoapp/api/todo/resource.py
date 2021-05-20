@@ -6,13 +6,13 @@ to registers their routes to the todo namespace
 from flask_restplus import Resource
 from datetime import date
 
+from todoapp.core.utils.auth import ACCESS_SCOPE
+from todoapp.core.dao.todo import Todo as TodoDAO
 from todoapp.api.auth import (
-	ACCESS_SCOPE, 
 	require_token,
 	require_accesslevel
 )
 
-from todoapp.core.dao.todo import Todo as TodoDAO
 from .namespace import todo_nspace
 from .model import TODO as todo_model
 from .model import TODO_WITH_MESSAGE as todo_msg_model

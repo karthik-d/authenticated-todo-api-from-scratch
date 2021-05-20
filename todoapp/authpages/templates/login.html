@@ -7,7 +7,7 @@
 	</head>
 	<body>
 
-		<form action="/api-auth/token" method="POST">
+		<form method="POST">
 
 			<div>
 				<label for='uname_ip'>Username: </label>
@@ -20,17 +20,12 @@
 			</div>
 
 			<div>
-				<label for='scope_ip'>Access Rights: </label>
-				<select name='scope' id='scope_ip'>
-					<option value="0">Read-Only</option>
-					<option value="1">Read-Write</option>
-					<option value="2">Admin</option>
-				  </select>
+				<input type="submit" value="Sign in" />
 			</div>
 
-			<div>
-				<input type="submit" value="Sign in">
-			</div>
+			<input type="hidden" name="redirect" value="{{redirect}}" />
+			<input type="hidden" name="state" value="{{state}}" />
+			<input type="hidden" name="scope" value="{{scope}}" />
 
 		</form>
 		

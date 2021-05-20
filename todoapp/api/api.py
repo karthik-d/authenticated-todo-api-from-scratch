@@ -7,7 +7,7 @@ from flask import Blueprint
 from flask_restplus import Api
 from jsonschema import FormatChecker
 
-from .auth import AUTH_SPEC
+from todoapp.core.utils.auth import AUTH_SPEC
 from .auth.namespace import auth_nspace
 from .todo.namespace import todo_nspace
 from .todo.custom_fields import Status

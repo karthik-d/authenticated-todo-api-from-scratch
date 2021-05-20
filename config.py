@@ -11,3 +11,6 @@ class ApplicationConfig:
 	SWAGGER_UI_OAUTH_APP_NAME = 'Demo'
 	ADMIN_USERNAME = 'admin'
 	ADMIN_PASSWORD = 'admin'
+	CLIENT_IDS = [ 
+		'test_todoapp'
+	]
