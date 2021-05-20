@@ -24,7 +24,7 @@ The script uses python's `csv` library to parse the CSV file.
 
 - When the header is read, the number of subjects are inferred, assuming the first column to be a list of names
 
-- A `for loop` is used to read the rest of the file and in each iteration, 
+- A for-loop is used to read the rest of the file and in each iteration, 
 
 	- The subject scores of the current student are compared with the current maximum, and replaced if higher. 
 	
@@ -39,7 +39,7 @@ The script uses python's `csv` library to parse the CSV file.
 
 ## Data Structures used
 
-### MinHeap - For overall toppers
+### MinHeap - For overall best-students
 
 Assume that `b` best students of the class have to be found ( here, b=3 )
 
@@ -91,10 +91,31 @@ When each subject score is encountered while parsing the rows, it compared again
 Assume marks for `n students` in `m subjects` and that `b best-students` to be found
 
 - Parsing the lines of the marks-list file takes `n` iterations. In each iteration, the following is done
+
 	- A row-list of size m is iterated. Hence, `m` iterations. ( The first value is the student name, which is separated out from the iteration. This is a `constant-time` operation ).
 
 	- In each `list iteration`, the following operations are performed
+
 		- Accumulate the subject-score by adding to total-score for student. This is q `constant-time` operation.
 
 		- Compare the score to respective subject-list and alter it as mentioned in the previous sections. This is also a `constant-time` operation
-	- In each 
+	
+	- If the number of students seen has crossed `b`, the total-score of the current student is compared to `minimum` of the min-heap. 
+
+		- If the new score is higher, it is replaced and heapified using a customized operation, as described in the previous section. This involves `one percolation` and hence is a `logarithmic-time` operation with complexity `O(log b)`
+		
+		- If the new score is equal, the value is simply appended to the `current minimum` heap-element's list. This is a `constant-time` operation, since python uses linked-lists
+
+	- Otherwise, if the number of students seen has NOT crossed `b`, the [ score, student ] element is simply inserted into the heap. This also involves `one percolation` and hence is a `logarithmic-time` operation with complexity `O(log b)`
+
+Summing the complexities and applying the sum and product rules,
+we have:
+
+	  O(n*( m*(O(1) + O(1))+  O(log b)))
+	= O(n*(O(m)+O(log b))
+	= O(nm + n log b) (or) O(nm) + O(n log b)
+
+- In the given case of `b=3`, this is `O(nm) + O(n.log 3)` = `O(nm) + O(n)` = `O(nm)`
+- In the worst case, `b=n` and the complexity becomes `O(nm) + O(n.log n)`
+
+
