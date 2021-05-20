@@ -23,7 +23,10 @@ class MinHeap:
 		self.key_idx = 0
 
 	def key_at(self, posn):
-		return self.heap[posn][self.key_idx]
+		if posn < self.size:
+			return self.heap[posn][self.key_idx]
+		else:
+			return None
 
 	def parent(self, posn):          
 		return posn // 2  
@@ -47,9 +50,9 @@ class MinHeap:
 		if self.size >= self.capacity:
 			return None
 		self.heap[self.size] = element
-		# Insert at bottom, percolate-up
-		self.percolate_up(self.size)
 		self.size += 1
+		# Insert at bottom, percolate-up
+		self.percolate_up(self.size-1)
 
 	def percolate_up(self, posn):
 		if posn==0:
@@ -66,9 +69,9 @@ class MinHeap:
 		left = self.left_child(posn)
 		right = self.right_child(posn)
 		smaller = posn 
-		if self.key_at(left)<self.key_at(smaller):
+		if self.key_at(left) and self.key_at(left)<self.key_at(smaller):
 			smaller = left 
-		if self.key_at(right)<self.key_at(smaller):
+		if self.key_at(right) and self.key_at(right)<self.key_at(smaller):
 			smaller = right
 		# Percolate-down if necessary
 		if(smaller!=posn):
@@ -95,106 +98,118 @@ class MinHeap:
 		return self.key_at(self.front)
 
 
-marklist_file = sys.argv[1:2]
-if not marklist_file:
-	print("No CSV file supplied")
-	exit(0)
-
-# Number of ranks to determine
-num_ranks = 3
-
-with open(marklist_file[0]) as f_in:
-	reader = csv.reader(f_in, delimiter=',')
-	header = next(reader)
-
-	# Initialize Subject-Max list
-	subject_names = header[1:]
-	num_subjects = len(subject_names)
-	# List of subject wise toppers
-	# Each element is a list, where
-	# - Index 0: Max Score
-	# - Indices 1-<end> : Names
-	# Allows for multiple toppers with same score
-	# Guranteed that atleast one name will enter, assuming Min Marks is 0
-	subject_max = [ [-1,] for x in range(num_subjects) ]
-	score_idx = 0
-	name_idx = 1
-
-	# Initialize Overall-Max Min-Heap - stores `num_ranks` maximums
-	# Min-Heap always stores 3 elements
-	# Each element is a list, where
-	# - Index 0: Max Score
-	# - Indices 1-<end> : Names
-	# Allows for multiple toppers with same score
-	# Always selects 3 best students (even if the 3 have same scores)
-	# But if there are more students with same marks as any of the 
-	# selected 3, these are listed additionaly
-	overall_max = MinHeap(capacity=num_ranks)
-
-	for datarow in reader:
-		name, scores = datarow[0], datarow[1:]
-
-		total_score = 0
-		for i in range(num_subjects):
-
-			# Find subject toppers
-			scores[i] = int(scores[i])
-			if scores[i] > subject_max[i][score_idx]:
-				subject_max[i] = [ scores[i], name ]
-			elif scores[i] == subject_max[i][score_idx]:
-				subject_max[i] += [ name ]
-
-			# Accumulate student's total score
-			total_score += scores[i]
-
-		if reader.line_num-1 > num_ranks:
-			if overall_max.show_min() < total_score:
-				overall_max.remove_min_add_elem( [ total_score, name ] )
-			elif overall_max.show_min() == total_score:
-				overall_max.append_values_to_min( [ name ] )
+if __name__=='__main__':
+	
+	marklist_file = sys.argv[1:2]
+	if not marklist_file:
+		print("No CSV file supplied")
+		try:
+			marklist_file = [ 'Student_marks_list.csv' ]
+			f = open('Student_marks_list.csv')
+		except FileNotFoundError:
+			exit()
 		else:
-			overall_max.insert( [ total_score, name ] )
+			f.close()	
 
-# Displaying subject toppers
-for i in range(num_subjects):
-	disp_string = "Topper(s) in {subject} : {name}".format(
-		subject = subject_names[i].ljust(10),
-		name = ', '.join(subject_max[i][1:])
-	)
-	print(disp_string)
+	# Number of ranks to determine
+	num_ranks = sys.argv[2:3]	
+	if len(num_ranks) == 0:
+		num_ranks = 3
+	else:
+		num_ranks = int(num_ranks[0])
 
-print()
+	with open(marklist_file[0]) as f_in:
+		reader = csv.reader(f_in, delimiter=',')
+		header = next(reader)
 
-# Displaying overall `num_ranks`
-best_studs_rev = list()
-scores = list()
-for i in range(num_ranks):
-	elem = overall_max.delete_min()
-	best_studs_rev.extend(elem[overall_max.key_idx+1:])
-	scores.extend([ elem[overall_max.key_idx] for x in range(len(elem)-1) ])
-found = len(scores)
+		# Initialize Subject-Max list
+		subject_names = header[1:]
+		num_subjects = len(subject_names)
+		# List of subject wise toppers
+		# Each element is a list, where
+		# - Index 0: Max Score
+		# - Indices 1-<end> : Names
+		# Allows for multiple toppers with same score
+		# Guranteed that atleast one name will enter, assuming Min Marks is 0
+		subject_max = [ [-1,] for x in range(num_subjects) ]
+		score_idx = 0
+		name_idx = 1
 
-print("Best students in the class are", end=" ")
-for i in range(1, num_ranks+1):
-	print(best_studs_rev[-i], end=", ")
+		# Initialize Overall-Max Min-Heap - stores `num_ranks` maximums
+		# Min-Heap always stores 3 elements
+		# Each element is a list, where
+		# - Index 0: Max Score
+		# - Indices 1-<end> : Names
+		# Allows for multiple toppers with same score
+		# Always selects 3 best students (even if the 3 have same scores)
+		# But if there are more students with same marks as any of the 
+		# selected 3, these are listed additionaly
+		overall_max = MinHeap(capacity=num_ranks)
 
-print("\n")
+		for datarow in reader:
+			name, scores = datarow[0], datarow[1:]
 
-print("-------------------------------------------------------------")
-print("List including  scores")
-print("( If more student(s) have scores tied with the Mentioned Best, this list includes them ) ")
-rank = 1
-prev_score = scores[0]
-for i in range(found-1, -1, -1):
-	disp_string = " Rank {rank}: {name} => {marks}".format(
-		name=best_studs_rev[i].ljust(10),
-		marks=scores[i],
-		rank=rank
-	)
-	print(disp_string)
-	if(scores[-i]>prev_score):
-		rank +=1
-		prev_score = scores[-i]
+			total_score = 0
+			for i in range(num_subjects):
+
+				# Find subject toppers
+				scores[i] = int(scores[i])
+				if scores[i] > subject_max[i][score_idx]:
+					subject_max[i] = [ scores[i], name ]
+				elif scores[i] == subject_max[i][score_idx]:
+					subject_max[i] += [ name ]
+
+				# Accumulate student's total score
+				total_score += scores[i]
+
+			if reader.line_num-1 > num_ranks:
+				if overall_max.show_min() < total_score:
+					overall_max.remove_min_add_elem( [ total_score, name ] )
+				elif overall_max.show_min() == total_score:
+					overall_max.append_values_to_min( [ name ] )
+			else:
+				overall_max.insert( [ total_score, name ] )
+
+	# Displaying subject toppers
+	for i in range(num_subjects):
+		disp_string = "Topper(s) in {subject} : {name}".format(
+			subject = subject_names[i].ljust(10),
+			name = ', '.join(subject_max[i][1:])
+		)
+		print(disp_string)
+
+	print()
+
+	# Displaying overall `num_ranks`
+	best_studs_rev = list()
+	scores = list()
+	for i in range(num_ranks):
+		elem = overall_max.delete_min()
+		best_studs_rev.extend(elem[overall_max.key_idx+1:])
+		scores.extend([ elem[overall_max.key_idx] for x in range(len(elem)-1) ])
+	found = len(scores)
+
+	print("Best students in the class are", end=" ")
+	for i in range(1, num_ranks+1):
+		print(best_studs_rev[-i], end=", ")
+
+	print("\n")
+
+	print("-------------------------------------------------------------")
+	print("List including  scores")
+	print("( If more student(s) have scores tied with the Mentioned Best, this list includes them ) ")
+	rank = 1
+	prev_score = scores[0]
+	for i in range(found-1, -1, -1):
+		disp_string = " Rank {rank}: {name} => {marks}".format(
+			name=best_studs_rev[i].ljust(10),
+			marks=scores[i],
+			rank=rank
+		)
+		print(disp_string)
+		if(scores[i]>prev_score):
+			rank +=1
+			prev_score = scores[i]
 	
 
 	

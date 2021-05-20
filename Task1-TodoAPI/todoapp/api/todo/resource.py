@@ -28,7 +28,7 @@ from .exception import (
 
 @require_token
 @todo_nspace.route(
-	'/', 
+	'', 
 	methods=[ 'GET', 'POST' ],
 	endpoint='todos'
 )
