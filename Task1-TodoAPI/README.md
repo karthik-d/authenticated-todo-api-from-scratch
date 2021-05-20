@@ -45,7 +45,7 @@ as per the conventions of oAuth2 authentication scheme
  If the credentials validate, the api-token is rendered back as JSON along with the `state` passed initially.
      
 
- *NOTE* : The actual response would be to redirect to the supplied `redirect_uri` with the values for `token` and `state` set as query strings. The client server would then pass this token with the Authorization-Header during each request. The code for this is 'commented-out' in [views.py](todoapp/authpages/views.pyconfig.py). For testing the API from a browser client, the token is simply returned and diplayed as JSON on the browser and has to be manually added to the header
+ *NOTE* : The actual response would be to redirect to the supplied `redirect_uri` with the values for `token` and `state` set as query strings. The client server would then pass this token with the Authorization-Header during each request. The code for this is 'commented-out' in [views.py](todoapp/authpages/views.py). For testing the API from a browser client, the token is simply returned and diplayed as JSON on the browser and has to be manually added to the header
 
    
  On each API request that requires token-authentication, attach the token to the request header under the field `X-Api-Token`
