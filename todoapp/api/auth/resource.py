@@ -6,6 +6,12 @@ from .namespace import auth_nspace
 from .model import TOKEN as token_model
 from .request_parser import Credentials_Parser
 
+from todoapp.api.auth import (
+	ACCESS_SCOPE, 
+	require_token,
+	require_accesslevel
+)
+
 from .exception import (
 	DidNotCreateTokenException,
 	TokenCreationDeniedException,
@@ -21,6 +27,7 @@ from .exception import (
 )
 class TokenList(Resource):	
 
+	@require_accesslevel(ACCESS_SCOPE.get('admin'))
 	@auth_nspace.doc('list_tokens')
 	@auth_nspace.response(200, "{ tokens list } OR No active tokends for the API")
 	@auth_nspace.marshal_with(token_model)
@@ -63,6 +70,7 @@ class TokenList(Resource):
 )
 class Token(Resource):	
 
+	@require_accesslevel(ACCESS_SCOPE.get('admin'))
 	@auth_nspace.doc('get_token')
 	@auth_nspace.response(200, "{ requested token }")
 	@auth_nspace.response(404, "Token with ID {id} doesn't exist")

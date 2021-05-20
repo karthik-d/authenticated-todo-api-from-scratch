@@ -7,7 +7,6 @@ from flask_restplus import Resource
 from datetime import date
 
 from todoapp.api.auth import (
-	AUTH_NAME, 
 	ACCESS_SCOPE, 
 	require_token,
 	require_accesslevel
@@ -40,7 +39,7 @@ class TodoList(Resource):
 
 	
 	@require_accesslevel(ACCESS_SCOPE.get('readonly'))
-	@todo_nspace.doc('list_todos', security=[{AUTH_NAME: ['read', 'write']}])
+	@todo_nspace.doc('list_todos')
 	@todo_nspace.response(200, "{ list of all tasks } ( OR ) No tasks in the todo-list")
 	@todo_nspace.marshal_list_with(todo_model)
 	def get(self):
