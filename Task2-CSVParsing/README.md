@@ -2,8 +2,18 @@
 
 Implemented in Python-3
 
+An alogithm to find the highest-scoring students subject-wise and overall from a supplied CSV marks-list
 
-An alogithm to fins the higest-scoring students subject-wise overall from a supplied CSV marks-list
+Assuming that the marks for `n students` in `m subjects` areg gievn and that `b best-students` are to be found, the time complexity of the algorithm is 
+	
+### ```O(nm + n log b) (or) O(nm) + O(n.log(b))```
+
+Which will be, 
+#### ```O(nm + n.log(3)) = O(nm) + O(n) = O(nm)``` for the given case ( b=3 )
+#### ```O(nm + n.log(n))``` for the worst case ( b=n )
+
+The detailed analysis is [attached at the end of this file](https://github.com/karthik-d/PythonProgrammingTest-LeanKloud/tree/main/Task2-CSVParsing#time-complexity-analysis), after eliciting all the details of the document
+	
 
 A sample file (the test data given) can be found in [Student_marks_list.csv](Student_marks_list.csv)
 
@@ -86,7 +96,7 @@ The subject toppers are stored in a **list** formatted as follows:
 When each subject score is encountered while parsing the rows, it compared against the corresponding list's `max_score` value and modified as necessary.   As mentioned, if the scores are equal, the new name is appended to the same list
 
 
-### Time-Complexity Analysis
+## Time-Complexity Analysis
 
 Assume marks for `n students` in `m subjects` and that `b best-students` to be found
 
