@@ -1,5 +1,5 @@
 # PythonProgrammingTask
-Python Programming Task - LeanKloud
+Python Programming Task
 
 The README files for the individual Tasks are contained in their rescpective root directories.
 These are the links to the root direcories:
