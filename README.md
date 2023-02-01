@@ -1,9 +1,3 @@
-# PythonProgrammingTask
-Python Programming Task
+# OAuth2 Authenticated Todo API Endpoints: A Bottom-up Implementation
 
-The README files for the individual Tasks are contained in their rescpective root directories.
-These are the links to the root direcories:
-
- - [Task1-TodoAPI](Task1-TodoAPI)
- 
- - [Task2-CSVParser](Task2-CSVParsing)
+The execution instructions and sepcifications for the implementation is contained in the sandboxed API container: [Task1-TodoAPI](Task1-TodoAPI)
